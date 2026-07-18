@@ -1,0 +1,32 @@
+---
+import { cn } from '@/lib/cn';
+import type { TrustMetric } from '@/types/testimonials';
+
+export interface Props {
+  metric: TrustMetric;
+  class?: string;
+}
+
+const { metric, class: className }: Props = Astro.props;
+---
+
+<article
+  class={cn(
+    'group h-full rounded-[var(--radius-ds)] border border-border bg-background-card/50 p-5 backdrop-blur-xl transition-[transform,border-color,box-shadow] duration-300 ease-out hover:-translate-y-1 hover:border-white/15 hover:shadow-[0_20px_50px_rgb(0_0_0_/0.3),0_0_36px_rgb(79_70_229_/0.12)] sm:p-6',
+    className,
+  )}
+  data-trust-metric
+>
+  <p
+    class="text-stat"
+    data-trust-counter
+    data-count={metric.value}
+    data-prefix={metric.prefix ?? ''}
+    data-suffix={metric.suffix ?? ''}
+  >
+    {`${metric.prefix ?? ''}${metric.value}${metric.suffix ?? ''}`}
+  </p>
+  <p class="text-label mt-3 normal-case tracking-normal text-muted">
+    {metric.label}
+  </p>
+</article>

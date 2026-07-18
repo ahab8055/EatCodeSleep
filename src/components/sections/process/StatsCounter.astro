@@ -1,0 +1,44 @@
+---
+import { cn } from '@/lib/cn';
+import type { ProcessStat } from '@/types/process';
+import { processStats } from '@/data/process';
+
+export interface Props {
+  stats?: ProcessStat[];
+  class?: string;
+}
+
+const { stats = processStats, class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn(
+    'grid grid-cols-2 gap-4 sm:gap-5 lg:grid-cols-4 lg:gap-6',
+    className,
+  )}
+  data-process-stats
+  role="group"
+  aria-label="EatCodeSleep performance metrics"
+>
+  {
+    stats.map((stat) => (
+      <div
+        class="stat-card rounded-[var(--radius-ds)] border border-border bg-background-card/50 p-5 backdrop-blur-xl sm:p-6"
+        data-stat-item
+      >
+        <p
+          class="text-stat"
+          data-stat-counter
+          data-count={stat.value}
+          data-prefix={stat.prefix ?? ''}
+          data-suffix={stat.suffix ?? ''}
+        >
+          {`${stat.prefix ?? ''}${stat.value}${stat.suffix ?? ''}`}
+        </p>
+        <p class="text-label mt-3 normal-case tracking-normal text-muted">
+          {stat.label}
+        </p>
+      </div>
+    ))
+  }
+</div>

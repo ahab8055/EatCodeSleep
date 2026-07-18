@@ -1,11 +1,53 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import MainLayout from '@/layouts/MainLayout.astro';
+import Hero from '@/components/sections/hero/Hero.astro';
+import Services from '@/components/sections/services/Services.astro';
+import Process from '@/components/sections/process/Process.astro';
+import FeaturedWork from '@/components/sections/work/FeaturedWork.astro';
+import Technologies from '@/components/sections/technologies/Technologies.astro';
+import WhyChooseUs from '@/components/sections/why/WhyChooseUs.astro';
+import Testimonials from '@/components/sections/testimonials/Testimonials.astro';
+import FAQ from '@/components/sections/faq/FAQ.astro';
+import FinalCTA from '@/components/sections/cta/FinalCTA.astro';
+import { faqs } from '@/data/faqs';
+import {
+  buildCanonicalUrl,
+  faqPageJsonLd,
+  organizationJsonLd,
+  websiteJsonLd,
+} from '@/utils/seo';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+const canonical = buildCanonicalUrl('/');
+const homeTitle = 'EatCodeSleep — AI Software Agency for Web, Apps & Automation';
+const homeDescription =
+  'EatCodeSleep builds modern software, AI-powered applications, and intelligent automation for startups and growing businesses.';
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<MainLayout
+  title={homeTitle}
+  description={homeDescription}
+  seo={{
+    canonical,
+    openGraph: {
+      title: homeTitle,
+      description: homeDescription,
+      url: canonical,
+      type: 'website',
+    },
+    jsonLd: [
+      organizationJsonLd(),
+      websiteJsonLd(),
+      faqPageJsonLd(faqs),
+    ],
+  }}
+>
+  <Hero />
+  <Services />
+  <Process />
+  <FeaturedWork />
+  <Technologies />
+  <WhyChooseUs />
+  <Testimonials />
+  <FAQ />
+  <FinalCTA />
+</MainLayout>

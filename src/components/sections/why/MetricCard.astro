@@ -1,0 +1,39 @@
+---
+import { cn } from '@/lib/cn';
+import type { WhyChooseMetric } from '@/types/why';
+
+export interface Props {
+  metric: WhyChooseMetric;
+  class?: string;
+}
+
+const { metric, class: className }: Props = Astro.props;
+const isStatic = Boolean(metric.display);
+---
+
+<article
+  class={cn(
+    'rounded-[var(--radius-ds)] border border-border bg-background-card/50 p-5 backdrop-blur-xl sm:p-6',
+    className,
+  )}
+  data-why-metric
+>
+  {
+    isStatic ? (
+      <p class="text-stat">{metric.display}</p>
+    ) : (
+      <p
+        class="text-stat"
+        data-why-counter
+        data-count={metric.value ?? 0}
+        data-prefix={metric.prefix ?? ''}
+        data-suffix={metric.suffix ?? ''}
+      >
+        {`${metric.prefix ?? ''}${metric.value ?? 0}${metric.suffix ?? ''}`}
+      </p>
+    )
+  }
+  <p class="text-label mt-3 normal-case tracking-normal text-muted">
+    {metric.label}
+  </p>
+</article>
