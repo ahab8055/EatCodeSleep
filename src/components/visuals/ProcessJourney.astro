@@ -1,0 +1,51 @@
+---
+/**
+ * Scroll-driven process journey track. Progress fills as the timeline scrolls.
+ * Place as a sibling overlay inside ProcessTimeline; JS updates --journey-progress.
+ */
+---
+
+<div
+  class="process-journey pointer-events-none absolute left-[1.7rem] top-0 bottom-0 w-px md:left-[1.95rem] lg:left-1/2 lg:-translate-x-1/2"
+  data-process-journey
+  aria-hidden="true"
+>
+  <div class="process-journey__track absolute inset-0 bg-white/[0.08]"></div>
+  <div
+    class="process-journey__fill absolute left-0 top-0 w-full origin-top bg-gradient-to-b from-primary via-secondary to-accent"
+    data-process-journey-fill
+  >
+  </div>
+  <div
+    class="process-journey__glow absolute left-1/2 top-0 size-3 -translate-x-1/2 -translate-y-1/2 rounded-full bg-secondary shadow-[0_0_18px_rgb(6_182_212_/0.85)]"
+    data-process-journey-glow
+  >
+  </div>
+</div>
+
+<style>
+  .process-journey {
+    z-index: 0;
+  }
+
+  .process-journey__fill {
+    height: 100%;
+    transform: scaleY(var(--journey-progress, 0));
+    will-change: transform;
+  }
+
+  .process-journey__glow {
+    top: calc(var(--journey-progress, 0) * 100%);
+    will-change: top;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .process-journey__fill {
+      transform: scaleY(1);
+    }
+
+    .process-journey__glow {
+      display: none;
+    }
+  }
+</style>

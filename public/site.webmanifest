@@ -1,0 +1,31 @@
+{
+  "name": "EatCodeSleep",
+  "short_name": "ECS",
+  "description": "Premium software agency building high-performance products, AI systems, and intelligent automation.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "browser",
+  "background_color": "#050816",
+  "theme_color": "#050816",
+  "lang": "en-US",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+---
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Heading from '@/components/ui/Heading.astro';
+import { heroContent } from '@/data/hero';
+---
+
+<div class="relative z-10 flex max-w-xl flex-col items-start">
+  <div data-hero-badge>
+    <Badge variant="outline" class="border-white/10 bg-white/5 normal-case tracking-[0.08em] text-muted">
+      <span class="relative flex size-2" aria-hidden="true">
+        <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-40"></span>
+        <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
+      </span>
+      {heroContent.badge}
+    </Badge>
+  </div>
+
+  <Heading as={1} size="display" id="hero-heading" class="mt-6 md:mt-8" balance={false}>
+    {
+      heroContent.headingLines.map((line) => (
+        <span class="block overflow-hidden">
+          <span class="block" data-hero-line>
+            {line}
+          </span>
+        </span>
+      ))
+    }
+  </Heading>
+
+  <p class="text-body-lg mt-6 max-w-[600px] text-pretty md:mt-8" data-hero-copy>
+    {heroContent.subheading}
+  </p>
+
+  <div class="mt-8 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:items-center md:mt-10">
+    <div data-hero-action>
+      <Button href={heroContent.primaryCta.href} size="lg" class="w-full sm:w-auto">
+        {heroContent.primaryCta.label}
+      </Button>
+    </div>
+    <div data-hero-action>
+      <Button
+        href={heroContent.secondaryCta.href}
+        variant="secondary"
+        size="lg"
+        showArrow={false}
+        class="w-full sm:w-auto"
+      >
+        {heroContent.secondaryCta.label}
+      </Button>
+    </div>
+  </div>
+</div>

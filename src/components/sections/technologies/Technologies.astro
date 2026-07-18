@@ -1,0 +1,99 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import TechnologiesBackground from '@/components/sections/technologies/TechnologiesBackground.astro';
+import TechnologyCategory from '@/components/sections/technologies/TechnologyCategory.astro';
+import EngineeringPrinciple from '@/components/sections/technologies/EngineeringPrinciple.astro';
+import TechnologyMarquee from '@/components/sections/technologies/TechnologyMarquee.astro';
+import NeuralConstellation from '@/components/visuals/NeuralConstellation.astro';
+import {
+  engineeringPrinciples,
+  technologiesSection,
+  technologyCategories,
+} from '@/data/technologies';
+---
+
+<Section
+  id="technologies"
+  spacing="xl"
+  class="scroll-mt-20 overflow-hidden"
+  ariaLabelledby="technologies-heading"
+>
+  <TechnologiesBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={technologiesSection.label}
+      heading={technologiesSection.headingLines}
+      description={technologiesSection.description}
+      headingId="technologies-heading"
+      size="lg"
+      class="mb-12 md:mb-16"
+    />
+
+    <div class="mb-14 content-auto md:mb-20" data-tech-constellation-wrap>
+      <NeuralConstellation />
+    </div>
+
+    <ul
+      class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6 lg:grid-cols-3"
+      data-tech-grid
+      role="list"
+      aria-label="Technology categories"
+    >
+      {
+        technologyCategories.map((category) => (
+          <li class="min-w-0">
+            <TechnologyCategory category={category} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <ul
+      class="mt-16 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 md:mt-20 lg:grid-cols-4 lg:gap-6"
+      data-engineering-principles
+      role="list"
+      aria-label="Engineering principles"
+    >
+      {
+        engineeringPrinciples.map((principle) => (
+          <li class="min-w-0">
+            <EngineeringPrinciple principle={principle} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <TechnologyMarquee class="mt-12 md:mt-16" />
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#technologies', async (root) => {
+      const {
+        playTechnologiesHeader,
+        playTechnologyCategories,
+        playEngineeringPrinciples,
+        playTechnologyMarquee,
+        startTechnologiesAmbient,
+      } = await import('@/lib/technologies-animations');
+
+      playTechnologiesHeader(root);
+      playTechnologyCategories(root);
+      playEngineeringPrinciples(root);
+      playTechnologyMarquee(root);
+      startTechnologiesAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

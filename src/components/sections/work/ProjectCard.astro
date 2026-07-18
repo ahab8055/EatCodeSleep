@@ -1,0 +1,104 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import Badge from '@/components/ui/Badge.astro';
+import BusinessResult from '@/components/sections/work/BusinessResult.astro';
+import ProjectMockup from '@/components/sections/work/ProjectMockup.astro';
+import TechnologyBadge from '@/components/sections/work/TechnologyBadge.astro';
+import { cn } from '@/lib/cn';
+import type { FeaturedProject } from '@/types/work';
+
+export interface Props {
+  project: FeaturedProject;
+  reverse?: boolean;
+  class?: string;
+}
+
+const { project, reverse = false, class: className }: Props = Astro.props;
+---
+
+<article
+  class={cn('project-card group relative', className)}
+  data-project-card
+  data-project-id={project.id}
+>
+  <div
+    class="project-card__surface relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/50 p-5 shadow-[0_24px_80px_rgb(0_0_0_/0.28)] backdrop-blur-xl transition-[transform,border-color,box-shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:border-white/15 group-hover:shadow-[0_28px_90px_rgb(0_0_0_/0.4),0_0_50px_rgb(79_70_229_/0.12)] sm:p-6 md:p-8 lg:p-10"
+  >
+    <div class="grid items-center gap-8 lg:grid-cols-2 lg:gap-12">
+      <div
+        class={cn(
+          'project-card__media overflow-hidden rounded-[calc(var(--radius-ds)-4px)] border border-border',
+          reverse && 'lg:order-2',
+        )}
+        data-project-media
+        data-project-animate
+      >
+        <div class="transition-transform duration-500 ease-out group-hover:scale-[1.03]" data-zoom data-tilt>
+          <ProjectMockup variant={project.mockup} alt={project.imageAlt} />
+        </div>
+      </div>
+
+      <div class={cn('min-w-0', reverse && 'lg:order-1')}>
+        <div data-project-content data-project-animate>
+          <Badge
+            variant="secondary"
+            class="normal-case tracking-[0.08em]"
+          >
+            {project.category}
+          </Badge>
+        </div>
+
+        <h3
+          class="font-display mt-4 text-2xl tracking-tight text-foreground md:mt-5 md:text-3xl"
+          data-project-content
+          data-project-animate
+        >
+          {project.title}
+        </h3>
+
+        <p
+          class="text-body mt-3 max-w-xl text-pretty md:mt-4"
+          data-project-content
+          data-project-animate
+        >
+          {project.description}
+        </p>
+
+        <ul
+          class="mt-5 flex flex-wrap gap-2 md:mt-6"
+          aria-label={`${project.title} technology stack`}
+        >
+          {
+            project.technologies.map((tech) => (
+              <li>
+                <TechnologyBadge class="group-hover:border-white/15 group-hover:text-foreground/90">
+                  {tech}
+                </TechnologyBadge>
+              </li>
+            ))
+          }
+        </ul>
+
+        <ul
+          class="mt-6 grid gap-2 sm:grid-cols-3 sm:gap-3 md:mt-8"
+          aria-label={`${project.title} business results`}
+        >
+          {project.results.map((result) => <BusinessResult result={result} />)}
+        </ul>
+
+        <div class="mt-6 md:mt-8" data-project-cta data-project-animate>
+          <a
+            href={project.href}
+            class="inline-flex items-center gap-2 text-sm font-medium text-foreground transition-colors duration-200 hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+          >
+            View Case Study
+            <ArrowRight
+              class="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1"
+              aria-hidden="true"
+            />
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</article>

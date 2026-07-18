@@ -1,0 +1,55 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import Section from '@/components/ui/Section.astro';
+import PhilosophyCard from '@/components/about/PhilosophyCard.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import { aboutPrinciples } from '@/data/about';
+---
+
+<Section
+  id="engineering-philosophy"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="engineering-philosophy-heading"
+  data-about-philosophy
+>
+  <AboutBackground />
+
+  <Container class="relative z-10">
+    <div
+      class="mx-auto max-w-4xl rounded-[var(--radius-ds)] border border-border bg-background-card/50 px-6 py-10 text-center backdrop-blur-xl sm:px-10 sm:py-14"
+      data-philosophy-panel
+    >
+      <p class="text-label text-secondary">Engineering Philosophy</p>
+      <Heading
+        as={2}
+        size="lg"
+        id="engineering-philosophy-heading"
+        class="mx-auto mt-4 md:mt-5"
+        balance={false}
+      >
+        <span class="block overflow-hidden">
+          <span class="block" data-about-reveal-line>Good software is built</span>
+        </span>
+        <span class="block overflow-hidden">
+          <span class="block" data-about-reveal-line>with intention.</span>
+        </span>
+      </Heading>
+    </div>
+
+    <ul
+      class="mt-10 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 lg:gap-6"
+      data-philosophy-grid
+      role="list"
+    >
+      {
+        aboutPrinciples.map((principle) => (
+          <li class="min-w-0">
+            <PhilosophyCard principle={principle} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

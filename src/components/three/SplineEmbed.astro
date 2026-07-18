@@ -1,0 +1,59 @@
+---
+/**
+ * Lazy Spline iframe embed. Use only where a published scene URL exists.
+ *
+ * Pass `sceneUrl` or set PUBLIC_SPLINE_CONTACT_URL to a
+ * https://my.spline.design/.../embed link.
+ * When unset, the slot (typically an R3F fallback) renders instead.
+ */
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  sceneUrl?: string;
+  title?: string;
+  class?: string;
+}
+
+const { sceneUrl, title = 'Interactive 3D scene', class: className }: Props = Astro.props;
+
+const envUrl =
+  typeof import.meta.env.PUBLIC_SPLINE_CONTACT_URL === 'string'
+    ? import.meta.env.PUBLIC_SPLINE_CONTACT_URL
+    : '';
+
+const url = (sceneUrl || envUrl).trim();
+---
+
+<div class={cn('relative h-full w-full overflow-hidden', className)} data-spline-root>
+  {
+    url ? (
+      <>
+        <iframe
+          src={url}
+          title={title}
+          loading="lazy"
+          class="spline-frame absolute inset-0 size-full border-0"
+          allow="autoplay; fullscreen"
+        />
+        <div class="spline-fallback absolute inset-0 hidden">
+          <slot />
+        </div>
+      </>
+    ) : (
+      <slot />
+    )
+  }
+</div>
+
+<style>
+  @media (prefers-reduced-motion: reduce) {
+    .spline-frame {
+      display: none;
+    }
+
+    .spline-fallback {
+      display: block !important;
+      position: relative;
+    }
+  }
+</style>

@@ -1,0 +1,80 @@
+---
+import {
+  BrainCircuit,
+  Cloud,
+  Compass,
+  Monitor,
+  Server,
+} from '@lucide/astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import WorkspaceScene from '@/components/visuals/WorkspaceScene.astro';
+import { aboutCapabilities } from '@/data/about';
+import type { AboutCapabilityIcon } from '@/types/about';
+
+const icons: Record<AboutCapabilityIcon, typeof Monitor> = {
+  monitor: Monitor,
+  server: Server,
+  'brain-circuit': BrainCircuit,
+  cloud: Cloud,
+  compass: Compass,
+};
+---
+
+<Section
+  id="team"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="team-heading"
+  data-about-team
+>
+  <AboutBackground />
+
+  <Container class="relative z-10">
+    <div class="grid items-center gap-10 lg:grid-cols-2 lg:gap-14">
+      <div>
+        <SectionHeading
+          label="Our Team"
+          heading={['Small team.', 'Big capabilities.']}
+          description="A network of engineers, designers, and specialists working together to deliver high-quality software solutions."
+          headingId="team-heading"
+        />
+
+        <ul
+          class="mt-10 grid grid-cols-1 gap-3 sm:grid-cols-2"
+          data-team-capabilities
+          role="list"
+        >
+          {
+            aboutCapabilities.map((capability) => {
+              const Icon = icons[capability.icon];
+              return (
+                <li data-team-capability>
+                  <article class="flex items-center gap-3 rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-4 py-3.5 backdrop-blur-xl">
+                    <span class="inline-flex size-9 shrink-0 items-center justify-center rounded-lg border border-border bg-white/5 text-secondary">
+                      <Icon class="size-4" aria-hidden="true" />
+                    </span>
+                    <h3 class="font-display text-base tracking-tight text-foreground">
+                      {capability.title}
+                    </h3>
+                  </article>
+                </li>
+              );
+            })
+          }
+        </ul>
+      </div>
+
+      <div
+        class="relative"
+        data-team-visual
+        data-about-float
+      >
+        <WorkspaceScene />
+      </div>
+    </div>
+  </Container>
+</Section>
+

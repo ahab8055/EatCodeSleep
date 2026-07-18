@@ -1,0 +1,66 @@
+---
+import { BrainCircuit, Cloud, CodeXml, Gauge } from '@lucide/astro';
+import { recognitionBadges } from '@/data/testimonials';
+import { cn } from '@/lib/cn';
+import type { RecognitionIconName } from '@/types/testimonials';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+
+const icons: Record<RecognitionIconName, typeof CodeXml> = {
+  'code-xml': CodeXml,
+  'brain-circuit': BrainCircuit,
+  cloud: Cloud,
+  gauge: Gauge,
+};
+---
+
+<div
+  class={cn('relative mx-auto max-w-5xl', className)}
+  data-recognition-panel
+>
+  <div
+    class="recognition-panel relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-5 py-8 backdrop-blur-xl sm:px-8 sm:py-10 md:px-10"
+  >
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/12 via-transparent to-secondary/10"
+      aria-hidden="true"
+    >
+    </div>
+
+    <ul
+      class="relative z-10 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 lg:gap-4"
+      role="list"
+      aria-label="EatCodeSleep recognition areas"
+    >
+      {
+        recognitionBadges.map((badge) => {
+          const Icon = icons[badge.icon];
+
+          return (
+            <li class="text-center sm:text-left lg:text-center">
+              <div class="mx-auto mb-3 inline-flex size-10 items-center justify-center rounded-full border border-border bg-white/5 text-secondary sm:mx-0 lg:mx-auto">
+                <Icon class="size-4" aria-hidden="true" />
+              </div>
+              <h3 class="font-display text-base tracking-tight text-foreground">
+                {badge.title}
+              </h3>
+              <p class="text-body-sm mt-1.5 text-pretty">{badge.description}</p>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </div>
+</div>
+
+<style>
+  .recognition-panel {
+    box-shadow:
+      0 24px 80px rgb(0 0 0 / 0.28),
+      0 0 50px rgb(79 70 229 / 0.1);
+  }
+</style>

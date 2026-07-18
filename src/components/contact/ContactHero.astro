@@ -1,0 +1,71 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import ContactBackground from '@/components/contact/ContactBackground.astro';
+import SplineEmbed from '@/components/three/SplineEmbed.astro';
+import DigitalWorkspace from '@/components/three/DigitalWorkspace';
+import { contactHero } from '@/data/contact';
+---
+
+<section
+  id="contact-hero"
+  class="relative flex min-h-[100svh] items-center overflow-hidden pt-16 md:pt-20"
+  aria-labelledby="contact-hero-heading"
+  data-contact-hero
+>
+  <ContactBackground />
+
+  <Container class="relative z-10 w-full py-12 md:py-16 lg:py-20">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="max-w-xl">
+        <p class="text-label text-secondary" data-contact-hero-label>
+          {contactHero.label}
+        </p>
+
+        <Heading as={1} size="display" id="contact-hero-heading" class="mt-5 md:mt-6" balance={false}>
+          {
+            contactHero.headingLines.map((line) => (
+              <span class="block overflow-hidden">
+                <span class="block" data-contact-hero-line>
+                  {line}
+                </span>
+              </span>
+            ))
+          }
+        </Heading>
+
+        <p class="text-body-lg mt-6 max-w-[34rem] text-pretty md:mt-8" data-contact-hero-copy>
+          {contactHero.description}
+        </p>
+
+        <div
+          class="mt-8 inline-flex items-center gap-2 rounded-full border border-border bg-white/5 px-4 py-2 backdrop-blur-md"
+          data-contact-availability
+        >
+          <span class="relative flex size-2" aria-hidden="true">
+            <span class="absolute inline-flex size-full animate-ping rounded-full bg-accent opacity-40"></span>
+            <span class="relative inline-flex size-2 rounded-full bg-accent"></span>
+          </span>
+          <span class="text-sm text-foreground">{contactHero.availability}</span>
+        </div>
+      </div>
+
+      <div
+        class="relative mx-auto h-[22rem] w-full max-w-md md:h-[26rem] lg:max-w-none"
+        data-contact-hero-visual
+        data-contact-float
+      >
+        <div
+          class="absolute left-1/2 top-1/2 size-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-[90px]"
+          data-contact-glow
+        >
+        </div>
+        <div class="relative z-10 h-full w-full overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/40 backdrop-blur-xl">
+          <SplineEmbed title="3D digital workspace" class="h-full w-full">
+            <DigitalWorkspace client:visible className="h-full w-full" />
+          </SplineEmbed>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>

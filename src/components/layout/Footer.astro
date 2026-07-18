@@ -1,0 +1,101 @@
+---
+import Container from '@/components/ui/Container.astro';
+import FooterBrand from '@/components/layout/FooterBrand.astro';
+import FooterNavigation from '@/components/layout/FooterNavigation.astro';
+import NewsletterForm from '@/components/layout/NewsletterForm.astro';
+import FooterCTA from '@/components/layout/FooterCTA.astro';
+import { footerContent } from '@/data/navigation';
+import { withTrailingSlash } from '@/utils/paths';
+---
+
+<footer id="site-footer" class="relative overflow-hidden border-t border-border" data-footer>
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="footer-bg absolute inset-0"></div>
+    <div class="footer-grid absolute inset-0 opacity-[0.12]"></div>
+    <div class="footer-noise absolute inset-0 opacity-[0.22] mix-blend-overlay"></div>
+    <div
+      class="absolute left-1/2 top-0 size-[36rem] -translate-x-1/2 rounded-full bg-primary/10 blur-[130px] gpu"
+      data-footer-glow
+    >
+    </div>
+    <div
+      class="absolute bottom-0 right-[-10%] size-[22rem] rounded-full bg-secondary/8 blur-[100px] gpu"
+      data-footer-glow
+    >
+    </div>
+  </div>
+
+  <Container class="relative z-10 py-16 md:py-20 lg:py-24">
+    <div class="grid gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 xl:gap-20">
+      <FooterBrand />
+      <div class="space-y-10">
+        <FooterNavigation />
+        <NewsletterForm />
+      </div>
+    </div>
+
+    <FooterCTA class="mt-12 md:mt-16" />
+
+    <div
+      class="mt-10 flex flex-col gap-4 border-t border-border pt-6 sm:mt-12 sm:flex-row sm:items-center sm:justify-between md:mt-14"
+      data-footer-bottom
+    >
+      <p class="text-xs text-muted">{footerContent.copyright}</p>
+      <nav aria-label="Legal">
+        <ul class="flex flex-wrap items-center gap-x-5 gap-y-2" role="list">
+          {
+            footerContent.legal.map((item) => (
+              <li>
+                <a
+                  href={withTrailingSlash(item.href)}
+                  class="text-xs text-muted transition-colors duration-200 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+                >
+                  {item.label}
+                </a>
+              </li>
+            ))
+          }
+        </ul>
+      </nav>
+    </div>
+  </Container>
+</footer>
+
+<style>
+  .footer-bg {
+    background:
+      radial-gradient(ellipse 60% 40% at 50% 0%, rgb(79 70 229 / 0.1), transparent 55%),
+      linear-gradient(180deg, #050816 0%, #03050f 100%);
+  }
+
+  .footer-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 70% 50% at 50% 0%, black 10%, transparent 70%);
+  }
+
+  .footer-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+</style>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('[data-footer]', async (root) => {
+      const { playFooterEntrance, startFooterAmbient } = await import('@/lib/footer-animations');
+      playFooterEntrance(root);
+      startFooterAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

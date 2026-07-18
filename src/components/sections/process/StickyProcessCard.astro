@@ -1,0 +1,44 @@
+---
+import { Check } from '@lucide/astro';
+import { processHighlight } from '@/data/process';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<aside
+  class={cn(
+    'process-sticky hidden lg:block',
+    className,
+  )}
+  data-process-sticky
+  aria-label={processHighlight.title}
+>
+  <div
+    class="sticky top-28 rounded-[var(--radius-ds)] border border-border bg-background-card/60 p-6 backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-white/15 hover:shadow-[0_0_40px_rgb(79_70_229_/0.15)]"
+  >
+    <h3 class="font-display text-lg tracking-tight text-foreground md:text-xl">
+      {processHighlight.title}
+    </h3>
+
+    <ul class="mt-5 space-y-3" role="list">
+      {
+        processHighlight.points.map((point) => (
+          <li class="flex items-start gap-3 text-sm text-muted">
+            <span
+              class="mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent"
+              aria-hidden="true"
+            >
+              <Check class="size-3" stroke-width={2.5} />
+            </span>
+            <span>{point}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</aside>

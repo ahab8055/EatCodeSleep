@@ -1,0 +1,58 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import Section from '@/components/ui/Section.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import { aboutStory } from '@/data/about';
+---
+
+<Section
+  id="our-story"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="our-story-heading"
+  data-about-story
+>
+  <AboutBackground />
+
+  <Container class="relative z-10">
+    <div class="grid items-start gap-10 lg:grid-cols-2 lg:gap-16">
+      <div data-about-story-heading>
+        <p class="text-label text-secondary">Our Story</p>
+        <Heading as={2} size="lg" id="our-story-heading" class="mt-4 md:mt-5" balance={false}>
+          {
+            aboutStory.headingLines.map((line) => (
+              <span class="block overflow-hidden">
+                <span class="block" data-about-reveal-line>
+                  {line}
+                </span>
+              </span>
+            ))
+          }
+        </Heading>
+      </div>
+
+      <div class="max-w-xl" data-about-story-copy>
+        <p class="text-body-lg text-pretty text-foreground/90">{aboutStory.lead}</p>
+        <p class="text-body mt-5 text-pretty">{aboutStory.body}</p>
+
+        <ul
+          class="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-2"
+          data-about-story-highlights
+          role="list"
+        >
+          {
+            aboutStory.highlights.map((item) => (
+              <li
+                class="rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-4 py-3 text-sm text-foreground backdrop-blur-xl"
+                data-about-highlight
+              >
+                {item.label}
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </Container>
+</Section>

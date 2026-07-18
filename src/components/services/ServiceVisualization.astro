@@ -1,0 +1,123 @@
+---
+import type { ServiceVisualKind } from '@/types/services-page';
+
+export interface Props {
+  visual: ServiceVisualKind;
+}
+
+const { visual }: Props = Astro.props;
+
+const configs: Record<
+  ServiceVisualKind,
+  { title: string; nodes: string[]; accent: string }
+> = {
+  web: {
+    title: 'Web Platform',
+    nodes: ['UI Layer', 'API Gateway', 'Business Logic', 'PostgreSQL'],
+    accent: 'from-primary/25 via-secondary/15 to-transparent',
+  },
+  ai: {
+    title: 'AI Pipeline',
+    nodes: ['User Intent', 'Retrieval', 'LLM Reasoning', 'Actions'],
+    accent: 'from-secondary/25 via-primary/15 to-transparent',
+  },
+  mobile: {
+    title: 'Mobile Stack',
+    nodes: ['React Native', 'Auth', 'Sync Layer', 'Push & Analytics'],
+    accent: 'from-accent/20 via-secondary/15 to-transparent',
+  },
+  automation: {
+    title: 'Automation Flow',
+    nodes: ['Trigger', 'Transform', 'AI Decision', 'Notify'],
+    accent: 'from-primary/20 via-accent/15 to-transparent',
+  },
+  backend: {
+    title: 'Backend Topology',
+    nodes: ['Clients', 'API Services', 'Cache', 'Primary DB'],
+    accent: 'from-secondary/20 via-primary/15 to-transparent',
+  },
+};
+
+const config = configs[visual];
+---
+
+<div
+  class="service-visual relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/70 p-5 shadow-[0_24px_60px_rgb(0_0_0_/0.35)] backdrop-blur-xl sm:p-6"
+  data-service-visual
+  data-services-float
+  aria-hidden="true"
+>
+  <div
+    class={`pointer-events-none absolute inset-0 bg-gradient-to-br ${config.accent}`}
+  >
+  </div>
+  <div
+    class="absolute -right-10 -top-10 size-40 rounded-full bg-primary/20 blur-[70px]"
+    data-services-glow
+  >
+  </div>
+  <div
+    class="absolute -bottom-12 -left-8 size-36 rounded-full bg-secondary/15 blur-[70px]"
+    data-services-glow
+  >
+  </div>
+
+  <p class="text-label relative z-10 mb-5 text-secondary">{config.title}</p>
+
+  <ul class="relative z-10 space-y-0">
+    {
+      config.nodes.map((node, index) => (
+        <li class="relative">
+          {index < config.nodes.length - 1 && (
+            <span class="service-visual__connector absolute left-[0.95rem] top-9 bottom-0 w-px" />
+          )}
+          <div class="relative z-10 mb-3 flex items-center gap-3 last:mb-0">
+            <span class="flex size-8 shrink-0 items-center justify-center rounded-lg border border-border bg-background-secondary/90 text-xs text-secondary shadow-[0_0_20px_rgb(6_182_212_/0.12)]">
+              {index + 1}
+            </span>
+            <div class="flex-1 rounded-xl border border-border bg-white/[0.04] px-3.5 py-2.5 text-sm text-foreground shadow-[inset_0_1px_0_rgb(255_255_255_/0.04)]">
+              {node}
+            </div>
+          </div>
+        </li>
+      ))
+    }
+  </ul>
+
+  <div class="relative z-10 mt-5 h-px w-full overflow-hidden rounded-full bg-white/5">
+    <span class="service-visual__pulse block h-full w-1/3 rounded-full bg-gradient-to-r from-transparent via-secondary to-transparent"></span>
+  </div>
+</div>
+
+<style>
+  .service-visual__connector {
+    background: linear-gradient(
+      180deg,
+      rgb(6 182 212 / 0.7),
+      rgb(79 70 229 / 0.35),
+      rgb(255 255 255 / 0.08)
+    );
+  }
+
+  .service-visual__pulse {
+    animation: service-visual-pulse 2.8s ease-in-out infinite;
+  }
+
+  @keyframes service-visual-pulse {
+    0% {
+      transform: translateX(-120%);
+    }
+    100% {
+      transform: translateX(320%);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-visual__pulse {
+      animation: none;
+      opacity: 0.5;
+      transform: none;
+      width: 100%;
+    }
+  }
+</style>

@@ -1,0 +1,39 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ServiceSection from '@/components/services/ServiceSection.astro';
+import ServicesBackground from '@/components/services/ServicesBackground.astro';
+import { serviceDetails } from '@/data/services-page';
+---
+
+<div class="relative overflow-hidden" data-service-detail-sections>
+  <ServicesBackground />
+
+  <Section
+    id="service-details"
+    spacing="none"
+    class="relative z-10 scroll-mt-[calc(4rem+3.25rem)] pt-10 md:scroll-mt-[calc(5rem+3.5rem)] md:pt-14"
+    ariaLabelledby="service-details-heading"
+  >
+    <Container>
+      <SectionHeading
+        label="What We Deliver"
+        heading={['Deep capability in the', 'systems that matter most.']}
+        description="Each engagement starts with the business problem, then moves into architecture, implementation, and measurable outcomes."
+        headingId="service-details-heading"
+        class="mb-8 md:mb-10"
+      />
+    </Container>
+
+    {
+      serviceDetails.map((service, index) => (
+        <ServiceSection
+          service={service}
+          reverse={index % 2 === 1}
+          isFirst={index === 0}
+        />
+      ))
+    }
+  </Section>
+</div>

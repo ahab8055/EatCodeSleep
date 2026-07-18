@@ -1,0 +1,122 @@
+---
+import { Blocks, Code2, Search, ShieldCheck, TrendingUp } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { ProcessIconName, ProcessStep } from '@/types/process';
+
+export interface Props {
+  step: ProcessStep;
+  index: number;
+  isLast?: boolean;
+  class?: string;
+}
+
+const { step, index, isLast = false, class: className }: Props = Astro.props;
+
+const isReversed = index % 2 === 1;
+
+const icons: Record<ProcessIconName, typeof Search> = {
+  search: Search,
+  blocks: Blocks,
+  'code-2': Code2,
+  'shield-check': ShieldCheck,
+  'trending-up': TrendingUp,
+};
+
+const Icon = icons[step.icon];
+---
+
+<li
+  class={cn('process-step relative', className)}
+  data-process-step
+  data-step-id={step.id}
+>
+  <div class="flex gap-4 md:gap-6 lg:grid lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-10">
+    <div
+      class="relative flex w-14 shrink-0 flex-col items-center md:w-16 lg:col-start-2 lg:row-start-1"
+      aria-hidden="true"
+    >
+      <div
+        class="process-step__number relative z-10 flex size-14 items-center justify-center rounded-full md:size-16"
+        data-step-number
+        data-step-animate
+      >
+        <span class="font-display text-sm font-semibold tracking-tight text-foreground md:text-base">
+          {step.number}
+        </span>
+      </div>
+
+      {
+        !isLast && (
+          <div
+            class="process-step__connector absolute top-14 bottom-0 w-px md:top-16"
+            data-step-connector
+            data-step-animate
+          />
+        )
+      }
+    </div>
+
+    <div
+      class={cn(
+        'min-w-0 flex-1 pb-10 md:pb-12 lg:pb-16',
+        isReversed
+          ? 'lg:col-start-3 lg:row-start-1 lg:text-left'
+          : 'lg:col-start-1 lg:row-start-1 lg:text-right',
+      )}
+    >
+      <div
+        class={cn(
+          'mb-3 inline-flex items-center gap-2 text-secondary',
+          !isReversed && 'lg:flex-row-reverse',
+        )}
+        data-step-icon
+        data-step-animate
+      >
+        <span
+          class="inline-flex size-9 items-center justify-center rounded-full border border-border bg-white/5"
+        >
+          <Icon class="size-4" aria-hidden="true" />
+        </span>
+      </div>
+
+      <h3
+        class="font-display text-xl tracking-tight text-foreground md:text-2xl"
+        data-step-title
+        data-step-animate
+      >
+        {step.title}
+      </h3>
+
+      <p
+        class={cn('text-body mt-3 max-w-md text-pretty', !isReversed && 'lg:ml-auto')}
+        data-step-copy
+        data-step-animate
+      >
+        {step.description}
+      </p>
+    </div>
+  </div>
+</li>
+
+<style>
+  .process-step__number {
+    background:
+      linear-gradient(var(--color-background-card), var(--color-background-card)) padding-box,
+      linear-gradient(135deg, rgb(79 70 229 / 0.9), rgb(6 182 212 / 0.7), rgb(34 197 94 / 0.5))
+        border-box;
+    border: 1px solid transparent;
+    box-shadow:
+      0 0 24px rgb(79 70 229 / 0.25),
+      inset 0 0 12px rgb(255 255 255 / 0.04);
+    backdrop-filter: blur(12px);
+  }
+
+  .process-step__connector {
+    background: transparent;
+  }
+
+  .process-step {
+    position: relative;
+    z-index: 1;
+  }
+</style>

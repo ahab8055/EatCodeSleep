@@ -1,0 +1,20 @@
+---
+/**
+ * Primary site layout for marketing pages.
+ * Wraps the base document shell with shared chrome.
+ */
+import Layout from '@/layouts/Layout.astro';
+import type { SeoProps } from '@/types/seo';
+
+export interface Props {
+  title?: string;
+  description?: string;
+  seo?: Partial<SeoProps>;
+}
+
+const { title, description, seo }: Props = Astro.props;
+---
+
+<Layout title={title} description={description} seo={seo}>
+  <slot />
+</Layout>

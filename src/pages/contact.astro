@@ -1,0 +1,142 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import ContactHero from '@/components/contact/ContactHero.astro';
+import ContactOptions from '@/components/contact/ContactOptions.astro';
+import ProjectForm from '@/components/contact/ProjectForm.astro';
+import ProcessTimeline from '@/components/contact/ProcessTimeline.astro';
+import TrustPanel from '@/components/contact/TrustPanel.astro';
+import ContactCTA from '@/components/contact/ContactCTA.astro';
+import { contactPageJsonLd, contactPageSeo } from '@/data/contact';
+---
+
+<MainLayout
+  title={contactPageSeo.title}
+  description={contactPageSeo.description}
+  seo={{
+    canonical: contactPageSeo.canonical,
+    keywords: [...contactPageSeo.keywords],
+    openGraph: {
+      title: contactPageSeo.socialTitle,
+      description: contactPageSeo.description,
+      url: contactPageSeo.canonical,
+      type: 'website',
+    },
+    twitter: {
+      title: contactPageSeo.socialTitle,
+      description: contactPageSeo.description,
+    },
+    jsonLd: contactPageJsonLd,
+  }}
+>
+  <ContactHero />
+  <ContactOptions />
+  <ProjectForm />
+  <ProcessTimeline />
+  <TrustPanel />
+  <ContactCTA />
+</MainLayout>
+
+<script>
+  import {
+    playContactHero,
+    playContactReveal,
+    startContactAmbient,
+  } from '@/lib/contact-page-animations';
+  import { initProjectForm } from '@/lib/contact-form-ui';
+  import { gsap } from '@/lib/gsap';
+  import { getPrefersReducedMotion } from '@/hooks/useReducedMotion';
+  import { ANIMATION } from '@/lib/constants';
+
+  function initContactPage(): void {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const hero = document.querySelector<HTMLElement>('[data-contact-hero]');
+    if (hero) playContactHero(hero);
+
+    const options = document.querySelector<HTMLElement>('[data-contact-options]');
+    if (options) {
+      playContactReveal(
+        options,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'optionsHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playContactReveal(
+        options,
+        '[data-contact-option-card]',
+        'optionsCardsAnimated',
+        '[data-contact-options-grid]',
+      );
+    }
+
+    const formSection = document.querySelector<HTMLElement>('[data-project-form-section]');
+    if (formSection) {
+      playContactReveal(
+        formSection,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'formHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playContactReveal(
+        formSection,
+        '[data-project-form-shell]',
+        'formShellAnimated',
+        '[data-project-form-shell]',
+      );
+      initProjectForm(formSection);
+    }
+
+    const process = document.querySelector<HTMLElement>('[data-contact-process]');
+    if (process) {
+      playContactReveal(
+        process,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'processHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playContactReveal(
+        process,
+        '[data-process-item]',
+        'processItemsAnimated',
+        '[data-process-list]',
+      );
+    }
+
+    const trust = document.querySelector<HTMLElement>('[data-contact-trust]');
+    if (trust) {
+      playContactReveal(
+        trust,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'trustHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playContactReveal(trust, '[data-trust-card]', 'trustCardsAnimated', '[data-trust-grid]');
+    }
+
+    const cta = document.querySelector<HTMLElement>('[data-contact-cta]');
+    if (cta) {
+      const panel = cta.querySelector<HTMLElement>('[data-contact-cta-panel]');
+      if (panel && !getPrefersReducedMotion() && cta.dataset.ctaAnimated !== 'true') {
+        cta.dataset.ctaAnimated = 'true';
+        gsap.fromTo(
+          panel,
+          { opacity: 0, y: 24, scale: 0.985 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: ANIMATION.duration.slow,
+            ease: ANIMATION.ease.power3,
+            scrollTrigger: { trigger: panel, start: 'top 85%', once: true },
+          },
+        );
+      }
+    }
+
+    startContactAmbient(main);
+  }
+
+  initContactPage();
+  document.addEventListener('astro:page-load', initContactPage);
+</script>

@@ -1,0 +1,55 @@
+---
+import { Check } from '@lucide/astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ServicesBackground from '@/components/services/ServicesBackground.astro';
+import { deliveryModels } from '@/data/services-page';
+---
+
+<Section
+  id="delivery-models"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="delivery-models-heading"
+  data-delivery-models
+>
+  <ServicesBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Delivery Models"
+      heading={['Clear ways to engage', 'depending on your stage.']}
+      description="Whether you need a full build, extra capacity, or focused expertise, we adapt the collaboration model to the outcome."
+      headingId="delivery-models-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6"
+      data-delivery-grid
+      role="list"
+    >
+      {
+        deliveryModels.map((model) => (
+          <li class="min-w-0" data-delivery-card>
+            <article class="flex h-full flex-col rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-6 backdrop-blur-xl sm:p-7">
+              <h3 class="font-display text-xl tracking-tight text-foreground">{model.title}</h3>
+              <p class="text-body mt-3 flex-1 text-pretty">{model.description}</p>
+              <ul class="mt-6 space-y-3" role="list" aria-label={`${model.title} includes`}>
+                {model.includes.map((item) => (
+                  <li class="flex items-center gap-3 text-sm text-muted">
+                    <span class="inline-flex size-5 shrink-0 items-center justify-center rounded-full bg-accent/15 text-accent">
+                      <Check class="size-3" stroke-width={2.5} aria-hidden="true" />
+                    </span>
+                    <span>{item}</span>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

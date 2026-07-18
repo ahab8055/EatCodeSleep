@@ -1,0 +1,64 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import AboutHeroVisual from '@/components/about/AboutHeroVisual.astro';
+import { aboutHero } from '@/data/about';
+---
+
+<section
+  id="about-hero"
+  class="relative flex min-h-[100svh] items-center overflow-hidden pt-16 md:pt-20"
+  aria-labelledby="about-hero-heading"
+  data-about-hero
+>
+  <AboutBackground />
+
+  <Container class="relative z-10 w-full py-12 md:py-16 lg:py-20">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="max-w-xl">
+        <p class="text-label text-secondary" data-about-hero-label>
+          {aboutHero.label}
+        </p>
+
+        <Heading as={1} size="display" id="about-hero-heading" class="mt-5 md:mt-6" balance={false}>
+          {
+            aboutHero.headingLines.map((line) => (
+              <span class="block overflow-hidden">
+                <span class="block" data-about-hero-line>
+                  {line}
+                </span>
+              </span>
+            ))
+          }
+        </Heading>
+
+        <p class="text-body-lg mt-6 max-w-[34rem] text-pretty md:mt-8" data-about-hero-copy>
+          {aboutHero.description}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center md:mt-10">
+          <div data-about-hero-action>
+            <Button href={aboutHero.primaryCta.href} size="lg" class="w-full sm:w-auto">
+              {aboutHero.primaryCta.label}
+            </Button>
+          </div>
+          <div data-about-hero-action>
+            <Button
+              href={aboutHero.secondaryCta.href}
+              variant="secondary"
+              size="lg"
+              showArrow={false}
+              class="w-full sm:w-auto"
+            >
+              {aboutHero.secondaryCta.label}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <AboutHeroVisual />
+    </div>
+  </Container>
+</section>

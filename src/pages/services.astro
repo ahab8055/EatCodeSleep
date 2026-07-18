@@ -1,0 +1,86 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import ServicesHero from '@/components/services/ServicesHero.astro';
+import ServiceNav from '@/components/services/ServiceNav.astro';
+import ServiceDetailSections from '@/components/services/ServiceDetailSections.astro';
+import DeliveryModels from '@/components/services/DeliveryModels.astro';
+import { servicesPageJsonLd, servicesPageSeo } from '@/data/services-page';
+---
+
+<MainLayout
+  title={servicesPageSeo.title}
+  description={servicesPageSeo.description}
+  seo={{
+    canonical: servicesPageSeo.canonical,
+    keywords: [...servicesPageSeo.keywords],
+    openGraph: {
+      description: servicesPageSeo.description,
+      url: servicesPageSeo.canonical,
+      type: 'website',
+    },
+    twitter: {
+      description: servicesPageSeo.description,
+    },
+    jsonLd: servicesPageJsonLd,
+  }}
+>
+  <ServicesHero />
+  <ServiceNav />
+  <ServiceDetailSections />
+  <DeliveryModels />
+</MainLayout>
+
+<script>
+  import {
+    initServiceNav,
+    playServiceSection,
+    playServicesHero,
+    playServicesReveal,
+    startServicesAmbient,
+  } from '@/lib/services-page-animations';
+
+  function initServicesPage(): void {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const hero = document.querySelector<HTMLElement>('[data-services-hero]');
+    if (hero) playServicesHero(hero);
+
+    const nav = document.querySelector<HTMLElement>('[data-service-nav]');
+    if (nav) initServiceNav(nav);
+
+    const details = document.querySelector<HTMLElement>('[data-service-detail-sections]');
+    if (details) {
+      playServicesReveal(
+        details,
+        '[data-section-heading]',
+        'detailsHeaderAnimated',
+        '[data-section-heading]',
+      );
+      details
+        .querySelectorAll<HTMLElement>('[data-service-section]')
+        .forEach((section) => playServiceSection(section));
+    }
+
+    const delivery = document.querySelector<HTMLElement>('[data-delivery-models]');
+    if (delivery) {
+      playServicesReveal(
+        delivery,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'deliveryHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playServicesReveal(
+        delivery,
+        '[data-delivery-card]',
+        'deliveryCardsAnimated',
+        '[data-delivery-grid]',
+      );
+    }
+
+    startServicesAmbient(main);
+  }
+
+  initServicesPage();
+  document.addEventListener('astro:page-load', initServicesPage);
+</script>

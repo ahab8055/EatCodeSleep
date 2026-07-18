@@ -1,0 +1,63 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import Badge from '@/components/ui/Badge.astro';
+import ArticleCover from '@/components/blog/ArticleCover.astro';
+import { formatPublishDate, getPostFilterId, type BlogPost } from '@/data/blog';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  post: BlogPost;
+  class?: string;
+}
+
+const { post, class: className }: Props = Astro.props;
+const href = `/blog/${post.id}`;
+const filterId = getPostFilterId(post);
+---
+
+<article
+  class={cn('article-card group relative h-full', className)}
+  data-article-card
+  data-filter={filterId}
+>
+  <a
+    href={href}
+    class="flex h-full flex-col overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-4 shadow-[0_16px_50px_rgb(0_0_0_/0.22)] backdrop-blur-xl transition-[transform,border-color,box-shadow] duration-300 ease-out group-hover:-translate-y-1 group-hover:border-white/15 group-hover:shadow-[0_24px_70px_rgb(0_0_0_/0.35),0_0_40px_rgb(79_70_229_/0.12)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary sm:p-5"
+  >
+    <div class="overflow-hidden rounded-[calc(var(--radius-ds)-6px)]">
+      <div class="transition-transform duration-500 ease-out group-hover:scale-[1.03]">
+        <ArticleCover variant={post.data.coverVariant} title={post.data.category} />
+      </div>
+    </div>
+
+    <div class="mt-5 flex flex-1 flex-col">
+      <Badge variant="secondary" class="w-fit normal-case tracking-[0.08em]">
+        {post.data.category}
+      </Badge>
+
+      <h3 class="font-display mt-3 text-xl tracking-tight text-foreground transition-colors group-hover:text-secondary">
+        {post.data.title}
+      </h3>
+
+      <p class="text-body-sm mt-3 flex-1 text-pretty">{post.data.description}</p>
+
+      <div class="mt-5 flex flex-wrap items-center gap-x-3 gap-y-1 text-xs text-muted">
+        <span>{post.data.author}</span>
+        <span aria-hidden="true">·</span>
+        <time datetime={post.data.publishDate.toISOString()}>
+          {formatPublishDate(post.data.publishDate)}
+        </time>
+        <span aria-hidden="true">·</span>
+        <span>{post.data.readingTime}</span>
+      </div>
+
+      <span class="mt-4 inline-flex items-center gap-2 text-sm font-medium text-foreground">
+        Read article
+        <ArrowRight
+          class="size-4 transition-transform duration-300 group-hover:translate-x-1"
+          aria-hidden="true"
+        />
+      </span>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,65 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ProcessBackground from '@/components/sections/process/ProcessBackground.astro';
+import ProcessTimeline from '@/components/sections/process/ProcessTimeline.astro';
+import StickyProcessCard from '@/components/sections/process/StickyProcessCard.astro';
+import StatsCounter from '@/components/sections/process/StatsCounter.astro';
+import { processSection } from '@/data/process';
+---
+
+<Section
+  id="process"
+  spacing="xl"
+  class="scroll-mt-20 overflow-hidden"
+  ariaLabelledby="process-heading"
+>
+  <ProcessBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={processSection.label}
+      heading={processSection.headingLines}
+      description={processSection.description}
+      headingId="process-heading"
+      size="lg"
+      class="mb-12 md:mb-16"
+    />
+
+    <div class="grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem] lg:items-start lg:gap-12 xl:grid-cols-[minmax(0,1fr)_20rem] xl:gap-16">
+      <ProcessTimeline />
+      <StickyProcessCard />
+    </div>
+
+    <StatsCounter class="mt-16 md:mt-20 lg:mt-24" />
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#process', async (root) => {
+      const {
+        playProcessHeaderEntrance,
+        playProcessStepsEntrance,
+        playProcessStatsEntrance,
+        startProcessAmbientMotion,
+        startProcessJourney,
+      } = await import('@/lib/process-animations');
+
+      playProcessHeaderEntrance(root);
+      playProcessStepsEntrance(root);
+      playProcessStatsEntrance(root);
+      startProcessAmbientMotion(root);
+      startProcessJourney(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

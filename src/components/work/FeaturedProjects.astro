@@ -1,0 +1,38 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ProjectCard from '@/components/work/ProjectCard.astro';
+import WorkBackground from '@/components/work/WorkBackground.astro';
+import { featuredProjects } from '@/data/projects';
+---
+
+<Section
+  id="featured-projects"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="featured-projects-heading"
+  data-featured-projects
+>
+  <WorkBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Featured Projects"
+      heading={['Selected work that', 'shows how we build.']}
+      description="Large case studies highlighting architecture choices, product craft, and measurable business outcomes."
+      headingId="featured-projects-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul class="flex flex-col gap-8 md:gap-10 lg:gap-12" data-featured-grid role="list">
+      {
+        featuredProjects.map((project, index) => (
+          <li class="min-w-0" data-featured-card>
+            <ProjectCard project={project} variant="featured" reverse={index % 2 === 1} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

@@ -1,0 +1,18 @@
+---
+/**
+ * Neural constellation — Three.js icon network (no text labels).
+ */
+import NeuralConstellation3D from '@/components/three/NeuralConstellation3D';
+---
+
+<div
+  class="relative mx-auto aspect-square w-full max-w-xl md:max-w-2xl"
+  data-tech-constellation
+>
+  <div
+    class="pointer-events-none absolute left-1/2 top-1/2 size-[55%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-[70px]"
+    data-tech-glow
+  >
+  </div>
+  <NeuralConstellation3D client:visible className="relative z-10 h-full w-full" />
+</div>

@@ -1,0 +1,318 @@
+---
+/**
+ * Service ecosystem diagram — static white spheres with brand icons.
+ * No animations; hover only nudges contrast (instant, no transition).
+ */
+import type { SimpleIcon } from 'simple-icons';
+import {
+  siAstro,
+  siAuth0,
+  siClaude,
+  siDocker,
+  siExpo,
+  siFirebase,
+  siHubspot,
+  siLangchain,
+  siMake,
+  siN8n,
+  siNextdotjs,
+  siNodedotjs,
+  siPostgresql,
+  siPython,
+  siReact,
+  siStripe,
+  siTypescript,
+  siVite,
+  siZapier,
+} from 'simple-icons';
+import { AWS_ICON } from '@/components/three/techIcons';
+
+export interface Props {
+  serviceId: string;
+}
+
+const { serviceId }: Props = Astro.props;
+
+type IconMark = { title: string; hex: string; path: string };
+
+const fromSi = (icon: SimpleIcon): IconMark => ({
+  title: icon.title,
+  hex: icon.hex,
+  path: icon.path,
+});
+
+const AWS: IconMark = {
+  title: AWS_ICON.title,
+  hex: AWS_ICON.hex,
+  path: AWS_ICON.path,
+};
+
+type EcoNode = {
+  id: string;
+  x: number;
+  y: number;
+  icon: IconMark;
+  center?: boolean;
+};
+
+type Graph = {
+  nodes: EcoNode[];
+  edges: [string, string][];
+};
+
+const graphs: Record<string, Graph> = {
+  'web-application-development': {
+    nodes: [
+      { id: 'react', x: 18, y: 28, icon: fromSi(siReact) },
+      { id: 'next', x: 50, y: 22, icon: fromSi(siNextdotjs), center: true },
+      { id: 'astro', x: 82, y: 28, icon: fromSi(siAstro) },
+      { id: 'ts', x: 28, y: 72, icon: fromSi(siTypescript) },
+      { id: 'vite', x: 72, y: 72, icon: fromSi(siVite) },
+    ],
+    edges: [
+      ['react', 'next'],
+      ['astro', 'next'],
+      ['next', 'ts'],
+      ['next', 'vite'],
+    ],
+  },
+  'mobile-app-development': {
+    nodes: [
+      { id: 'react', x: 20, y: 28, icon: fromSi(siReact) },
+      { id: 'expo', x: 50, y: 48, icon: fromSi(siExpo), center: true },
+      { id: 'firebase', x: 80, y: 28, icon: fromSi(siFirebase) },
+      { id: 'ts', x: 28, y: 78, icon: fromSi(siTypescript) },
+      { id: 'node', x: 72, y: 78, icon: fromSi(siNodedotjs) },
+    ],
+    edges: [
+      ['react', 'expo'],
+      ['firebase', 'expo'],
+      ['expo', 'ts'],
+      ['expo', 'node'],
+    ],
+  },
+  'ai-integration': {
+    nodes: [
+      { id: 'claude', x: 50, y: 16, icon: fromSi(siClaude) },
+      { id: 'langchain', x: 50, y: 48, icon: fromSi(siLangchain), center: true },
+      { id: 'python', x: 18, y: 72, icon: fromSi(siPython) },
+      { id: 'node', x: 82, y: 72, icon: fromSi(siNodedotjs) },
+      { id: 'pg', x: 50, y: 88, icon: fromSi(siPostgresql) },
+    ],
+    edges: [
+      ['claude', 'langchain'],
+      ['langchain', 'python'],
+      ['langchain', 'node'],
+      ['python', 'pg'],
+      ['node', 'pg'],
+    ],
+  },
+  'ai-agents': {
+    nodes: [
+      { id: 'claude', x: 50, y: 14, icon: fromSi(siClaude) },
+      { id: 'langchain', x: 50, y: 42, icon: fromSi(siLangchain), center: true },
+      { id: 'python', x: 18, y: 70, icon: fromSi(siPython) },
+      { id: 'node', x: 82, y: 70, icon: fromSi(siNodedotjs) },
+      { id: 'n8n', x: 50, y: 88, icon: fromSi(siN8n) },
+    ],
+    edges: [
+      ['claude', 'langchain'],
+      ['langchain', 'python'],
+      ['langchain', 'node'],
+      ['python', 'n8n'],
+      ['node', 'n8n'],
+    ],
+  },
+  'automation-systems': {
+    nodes: [
+      { id: 'zapier', x: 20, y: 28, icon: fromSi(siZapier) },
+      { id: 'n8n', x: 50, y: 50, icon: fromSi(siN8n), center: true },
+      { id: 'make', x: 80, y: 28, icon: fromSi(siMake) },
+      { id: 'hubspot', x: 28, y: 82, icon: fromSi(siHubspot) },
+      { id: 'stripe', x: 72, y: 82, icon: fromSi(siStripe) },
+    ],
+    edges: [
+      ['zapier', 'n8n'],
+      ['make', 'n8n'],
+      ['n8n', 'hubspot'],
+      ['n8n', 'stripe'],
+    ],
+  },
+  'cloud-backend-engineering': {
+    nodes: [
+      { id: 'node', x: 20, y: 28, icon: fromSi(siNodedotjs) },
+      { id: 'aws', x: 50, y: 48, icon: AWS, center: true },
+      { id: 'auth', x: 80, y: 28, icon: fromSi(siAuth0) },
+      { id: 'pg', x: 28, y: 80, icon: fromSi(siPostgresql) },
+      { id: 'docker', x: 72, y: 80, icon: fromSi(siDocker) },
+    ],
+    edges: [
+      ['node', 'aws'],
+      ['auth', 'aws'],
+      ['aws', 'pg'],
+      ['aws', 'docker'],
+    ],
+  },
+};
+
+const graph = graphs[serviceId] ?? graphs['ai-agents'];
+const nodeById = Object.fromEntries(graph.nodes.map((n) => [n.id, n]));
+const gradId = `eco-line-${serviceId}`;
+const glowId = `eco-glow-${serviceId}`;
+---
+
+<div
+  class="service-ecosystem relative mt-5 aspect-[16/10] w-full overflow-hidden rounded-[calc(var(--radius-ds)-6px)] border border-border bg-gradient-to-br from-background-secondary/80 via-[#0B1023] to-background-card/40"
+  data-service-ecosystem
+  aria-hidden="true"
+>
+  <div class="service-ecosystem__grid absolute inset-0 opacity-40"></div>
+
+  <svg class="absolute inset-0 size-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+    <defs>
+      <linearGradient id={gradId} x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.15"></stop>
+        <stop offset="50%" stop-color="#4F46E5" stop-opacity="0.7"></stop>
+        <stop offset="100%" stop-color="#22C55E" stop-opacity="0.2"></stop>
+      </linearGradient>
+      <filter id={glowId} x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="0.8" result="blur"></feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+
+    {
+      graph.edges.map(([from, to]) => {
+        const a = nodeById[from];
+        const b = nodeById[to];
+        return (
+          <g>
+            <line
+              class="service-ecosystem__edge"
+              x1={a.x}
+              y1={a.y}
+              x2={b.x}
+              y2={b.y}
+              stroke={`url(#${gradId})`}
+              stroke-width="0.9"
+              stroke-linecap="round"
+              filter={`url(#${glowId})`}
+            />
+            <circle cx={(a.x + b.x) / 2} cy={(a.y + b.y) / 2} r="0.55" fill="#06B6D4" opacity="0.55" />
+          </g>
+        );
+      })
+    }
+  </svg>
+
+  {
+    graph.nodes.map((node) => (
+      <div
+        class:list={[
+          'service-ecosystem__node absolute -translate-x-1/2 -translate-y-1/2',
+          node.center && 'service-ecosystem__node--center',
+        ]}
+        style={`left: ${node.x}%; top: ${node.y}%`}
+        title={node.icon.title}
+        data-eco-node
+      >
+        <span class="service-ecosystem__orb">
+          <svg
+            class="service-ecosystem__icon"
+            viewBox="0 0 24 24"
+            aria-hidden="true"
+            style={`color: #${node.icon.hex === '000000' || node.icon.hex === '1C2024' ? '111827' : node.icon.hex}`}
+          >
+            <path fill="currentColor" d={node.icon.path} />
+          </svg>
+        </span>
+      </div>
+    ))
+  }
+</div>
+
+<style>
+  .service-ecosystem__grid {
+    background-image:
+      radial-gradient(ellipse 70% 60% at 50% 45%, rgb(79 70 229 / 0.12), transparent 65%),
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+    background-size:
+      auto,
+      20px 20px,
+      20px 20px;
+    mask-image: radial-gradient(ellipse 75% 70% at 50% 50%, black, transparent);
+  }
+
+  .service-ecosystem__edge {
+    opacity: 0.75;
+  }
+
+  .service-ecosystem__orb {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background:
+      radial-gradient(circle at 32% 28%, #ffffff 0%, #f3f4f6 42%, #d1d5db 100%);
+    border: 1px solid rgb(255 255 255 / 0.65);
+    box-shadow:
+      0 8px 20px rgb(0 0 0 / 0.35),
+      inset 0 1px 2px rgb(255 255 255 / 0.9),
+      inset 0 -3px 6px rgb(0 0 0 / 0.12);
+  }
+
+  .service-ecosystem__node--center .service-ecosystem__orb {
+    width: 2.85rem;
+    height: 2.85rem;
+    box-shadow:
+      0 10px 28px rgb(0 0 0 / 0.4),
+      0 0 0 3px rgb(79 70 229 / 0.22),
+      inset 0 1px 2px rgb(255 255 255 / 0.95),
+      inset 0 -3px 6px rgb(0 0 0 / 0.12);
+  }
+
+  .service-ecosystem__icon {
+    width: 46%;
+    height: 46%;
+    display: block;
+  }
+
+  .service-ecosystem__node--center .service-ecosystem__icon {
+    width: 44%;
+    height: 44%;
+  }
+
+  :global(.group:hover) .service-ecosystem__edge,
+  :global(.group:focus-within) .service-ecosystem__edge {
+    opacity: 1;
+  }
+
+  :global(.group:hover) .service-ecosystem__orb,
+  :global(.group:focus-within) .service-ecosystem__orb {
+    border-color: rgb(255 255 255 / 0.9);
+    box-shadow:
+      0 10px 26px rgb(0 0 0 / 0.4),
+      0 0 18px rgb(6 182 212 / 0.2),
+      inset 0 1px 2px rgb(255 255 255 / 0.95),
+      inset 0 -3px 6px rgb(0 0 0 / 0.12);
+  }
+
+  @media (min-width: 640px) {
+    .service-ecosystem__orb {
+      width: 2.65rem;
+      height: 2.65rem;
+    }
+
+    .service-ecosystem__node--center .service-ecosystem__orb {
+      width: 3.15rem;
+      height: 3.15rem;
+    }
+  }
+</style>

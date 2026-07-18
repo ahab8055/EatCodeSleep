@@ -1,0 +1,26 @@
+---
+import FAQItem from '@/components/sections/faq/FAQItem.astro';
+import { faqs } from '@/data/faqs';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn('flex flex-col gap-3 sm:gap-4', className)}
+  data-faq-accordion
+  role="list"
+  aria-label="Frequently asked questions"
+>
+  {
+    faqs.map((item) => (
+      <div role="listitem">
+        <FAQItem item={item} />
+      </div>
+    ))
+  }
+</div>

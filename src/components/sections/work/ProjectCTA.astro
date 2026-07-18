@@ -1,0 +1,66 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Heading from '@/components/ui/Heading.astro';
+import { featuredWorkCta } from '@/data/work';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn('relative mx-auto max-w-3xl', className)}
+  data-work-cta
+>
+  <div
+    class="work-cta__panel relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-6 py-10 text-center backdrop-blur-xl sm:px-10 sm:py-12 md:px-14"
+  >
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-secondary/10"
+      aria-hidden="true"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute left-1/2 top-0 size-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[80px]"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="relative z-10">
+      <Heading as={3} size="md" class="mx-auto max-w-xl" balance>
+        {featuredWorkCta.title}
+      </Heading>
+
+      <p class="text-body mx-auto mt-4 max-w-xl text-pretty">
+        {featuredWorkCta.description}
+      </p>
+
+      <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+        <Button href={featuredWorkCta.primary.href} size="lg" class="w-full sm:w-auto">
+          {featuredWorkCta.primary.label}
+        </Button>
+        <Button
+          href={featuredWorkCta.secondary.href}
+          variant="secondary"
+          size="lg"
+          showArrow={false}
+          class="w-full sm:w-auto"
+        >
+          {featuredWorkCta.secondary.label}
+        </Button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .work-cta__panel {
+    box-shadow:
+      0 24px 80px rgb(0 0 0 / 0.3),
+      0 0 0 1px rgb(255 255 255 / 0.04),
+      0 0 60px rgb(79 70 229 / 0.12);
+  }
+</style>

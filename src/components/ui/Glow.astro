@@ -1,0 +1,34 @@
+---
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+  color?: 'primary' | 'secondary' | 'accent';
+  intensity?: 'soft' | 'medium' | 'strong';
+}
+
+const { class: className, color = 'primary', intensity = 'medium' }: Props = Astro.props;
+
+const colorClasses = {
+  primary: 'shadow-[var(--shadow-glow-primary)]',
+  secondary: 'shadow-[var(--shadow-glow-secondary)]',
+  accent: 'shadow-[0_0_40px_rgb(34_197_94_/0.3)]',
+} as const;
+
+const intensityClasses = {
+  soft: 'opacity-40',
+  medium: 'opacity-70',
+  strong: 'opacity-100',
+} as const;
+---
+
+<div
+  class={cn(
+    'pointer-events-none absolute inset-0 rounded-[var(--radius-ds)] gpu',
+    colorClasses[color],
+    intensityClasses[intensity],
+    className,
+  )}
+  aria-hidden="true"
+>
+</div>

@@ -1,0 +1,42 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ValueCard from '@/components/about/ValueCard.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import { aboutValues } from '@/data/about';
+---
+
+<Section
+  id="values"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="values-heading"
+  data-about-values
+>
+  <AboutBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Company Values"
+      heading={['Principles that guide', 'every decision.']}
+      description="These values shape how we design systems, collaborate with clients, and ship software that lasts."
+      headingId="values-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+      data-values-grid
+      role="list"
+    >
+      {
+        aboutValues.map((value) => (
+          <li class="min-w-0">
+            <ValueCard value={value} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

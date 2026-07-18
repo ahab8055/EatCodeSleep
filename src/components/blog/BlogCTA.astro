@@ -1,0 +1,52 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import Section from '@/components/ui/Section.astro';
+import { blogCta } from '@/data/blog';
+---
+
+<Section
+  id="blog-cta"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="blog-cta-heading"
+  data-blog-cta
+>
+  <div class="pointer-events-none absolute inset-0" aria-hidden="true">
+    <div class="absolute inset-0 bg-gradient-to-br from-primary/16 via-background to-secondary/10"></div>
+    <div
+      class="absolute left-1/2 top-1/2 size-[26rem] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-[120px]"
+      data-blog-glow
+    >
+    </div>
+  </div>
+
+  <Container class="relative z-10">
+    <div
+      class="mx-auto max-w-3xl rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-6 py-12 text-center backdrop-blur-xl sm:px-10 sm:py-14"
+      data-blog-cta-panel
+    >
+      <Heading as={2} size="lg" id="blog-cta-heading" class="mx-auto">
+        {blogCta.heading}
+      </Heading>
+      <p class="text-body-lg mx-auto mt-4 max-w-xl text-pretty">
+        {blogCta.description}
+      </p>
+      <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center">
+        <Button href={blogCta.primaryCta.href} size="lg" class="w-full sm:w-auto">
+          {blogCta.primaryCta.label}
+        </Button>
+        <Button
+          href={blogCta.secondaryCta.href}
+          variant="secondary"
+          size="lg"
+          showArrow={false}
+          class="w-full sm:w-auto"
+        >
+          {blogCta.secondaryCta.label}
+        </Button>
+      </div>
+    </div>
+  </Container>
+</Section>

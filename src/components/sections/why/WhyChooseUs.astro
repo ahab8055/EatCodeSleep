@@ -1,0 +1,109 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import WhyChooseBackground from '@/components/sections/why/WhyChooseBackground.astro';
+import ValueCard from '@/components/sections/why/ValueCard.astro';
+import ComparisonCard from '@/components/sections/why/ComparisonCard.astro';
+import QuotePanel from '@/components/sections/why/QuotePanel.astro';
+import MetricCard from '@/components/sections/why/MetricCard.astro';
+import {
+  comparisonColumns,
+  valueCards,
+  whyChooseMetrics,
+  whyChooseSection,
+} from '@/data/why';
+---
+
+<Section
+  id="why-eatcodesleep"
+  spacing="xl"
+  class="scroll-mt-20 overflow-hidden"
+  ariaLabelledby="why-heading"
+>
+  <WhyChooseBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={whyChooseSection.label}
+      heading={whyChooseSection.headingLines}
+      description={whyChooseSection.description}
+      headingId="why-heading"
+      size="lg"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 sm:gap-5 md:grid-cols-2 md:gap-6"
+      data-value-grid
+      role="list"
+      aria-label="Reasons to choose EatCodeSleep"
+    >
+      {
+        valueCards.map((item) => (
+          <li class="min-w-0">
+            <ValueCard item={item} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="mt-16 grid grid-cols-1 gap-4 sm:gap-5 md:mt-20 md:grid-cols-2 md:gap-6"
+      data-comparison-grid
+    >
+      {
+        comparisonColumns.map((column) => (
+          <ComparisonCard column={column} />
+        ))
+      }
+    </div>
+
+    <QuotePanel class="mt-16 md:mt-20 lg:mt-24" />
+
+    <ul
+      class="mt-12 grid grid-cols-2 gap-4 sm:gap-5 md:mt-16 lg:grid-cols-4 lg:gap-6"
+      data-why-metrics
+      role="list"
+      aria-label="EatCodeSleep trust indicators"
+    >
+      {
+        whyChooseMetrics.map((metric) => (
+          <li class="min-w-0">
+            <MetricCard metric={metric} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#why-eatcodesleep', async (root) => {
+      const {
+        playWhyChooseHeader,
+        playWhyValueCards,
+        playWhyComparison,
+        playWhyQuote,
+        playWhyMetrics,
+        startWhyChooseAmbient,
+      } = await import('@/lib/why-animations');
+
+      playWhyChooseHeader(root);
+      playWhyValueCards(root);
+      playWhyComparison(root);
+      playWhyQuote(root);
+      playWhyMetrics(root);
+      startWhyChooseAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

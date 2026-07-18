@@ -1,0 +1,100 @@
+---
+import { ArrowRight } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import { isAbsoluteHttpUrl } from '@/lib/booking';
+import { withTrailingSlash } from '@/utils/paths';
+import type { ButtonSize, ButtonVariant } from '@/types/components';
+
+export interface Props {
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  variant?: ButtonVariant;
+  size?: ButtonSize;
+  class?: string;
+  ariaLabel?: string;
+  external?: boolean;
+  showArrow?: boolean;
+  disabled?: boolean;
+}
+
+const {
+  href,
+  type = 'button',
+  variant = 'primary',
+  size = 'md',
+  class: className,
+  ariaLabel,
+  external = false,
+  showArrow,
+  disabled = false,
+}: Props = Astro.props;
+
+const isExternal = external || Boolean(href && isAbsoluteHttpUrl(href));
+const resolvedHref = href ? (isExternal ? href : withTrailingSlash(href)) : undefined;
+
+const shouldShowArrow = showArrow ?? variant === 'primary';
+
+const baseClasses =
+  'group inline-flex items-center justify-center gap-2 font-body font-medium rounded-[var(--radius-ds)] transition-[transform,box-shadow,background-color,border-color,color] duration-200 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background disabled:pointer-events-none disabled:opacity-50 gpu';
+
+const variantClasses: Record<ButtonVariant, string> = {
+  primary:
+    'bg-primary text-foreground shadow-[var(--shadow-glow-primary)] hover:-translate-y-0.5 hover:shadow-[var(--shadow-button-lift)] active:translate-y-0',
+  secondary:
+    'glass text-foreground border border-border hover:-translate-y-0.5 hover:border-white/20 hover:bg-white/8 active:translate-y-0',
+};
+
+const sizeClasses: Record<ButtonSize, string> = {
+  sm: 'px-4 py-2 text-sm',
+  md: 'px-5 py-3 text-sm md:text-base',
+  lg: 'px-6 py-3.5 text-base md:text-lg',
+};
+
+const classes = cn(baseClasses, variantClasses[variant], sizeClasses[size], className);
+---
+
+{
+  resolvedHref ? (
+    <a
+      class={classes}
+      href={resolvedHref}
+      aria-label={ariaLabel}
+      aria-disabled={disabled || undefined}
+      target={isExternal ? '_blank' : undefined}
+      rel={isExternal ? 'noopener noreferrer' : undefined}
+      data-magnetic
+      data-cursor-hover
+    >
+      <span class="inline-flex items-center gap-2">
+        <slot />
+        {shouldShowArrow && (
+          <ArrowRight
+            class="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5"
+            aria-hidden="true"
+            data-icon
+          />
+        )}
+      </span>
+    </a>
+  ) : (
+    <button
+      class={classes}
+      type={type}
+      aria-label={ariaLabel}
+      disabled={disabled}
+      data-magnetic
+      data-cursor-hover
+    >
+      <span class="inline-flex items-center gap-2">
+        <slot />
+        {shouldShowArrow && (
+          <ArrowRight
+            class="size-4 transition-transform duration-200 ease-out group-hover:translate-x-0.5"
+            aria-hidden="true"
+            data-icon
+          />
+        )}
+      </span>
+    </button>
+  )
+}

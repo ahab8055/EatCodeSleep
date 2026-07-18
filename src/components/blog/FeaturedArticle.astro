@@ -1,0 +1,84 @@
+---
+import Badge from '@/components/ui/Badge.astro';
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import ArticleCover from '@/components/blog/ArticleCover.astro';
+import BlogBackground from '@/components/blog/BlogBackground.astro';
+import { formatPublishDate, type BlogPost } from '@/data/blog';
+
+export interface Props {
+  post: BlogPost;
+}
+
+const { post }: Props = Astro.props;
+const href = `/blog/${post.id}`;
+---
+
+<Section
+  id="featured-article"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="featured-article-heading"
+  data-featured-article
+>
+  <BlogBackground />
+
+  <Container class="relative z-10">
+    <p class="text-label text-secondary">Featured</p>
+    <h2 id="featured-article-heading" class="sr-only">Featured article</h2>
+
+    <article
+      class="mt-6 overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 shadow-[0_24px_80px_rgb(0_0_0_/0.28)] backdrop-blur-xl"
+      data-featured-panel
+    >
+      <div class="grid items-center gap-8 p-5 sm:p-6 lg:grid-cols-2 lg:gap-12 lg:p-10">
+        <div class="overflow-hidden rounded-[calc(var(--radius-ds)-4px)]" data-featured-media>
+          <ArticleCover
+            variant={post.data.coverVariant}
+            title={post.data.category}
+            class="transition-transform duration-500 ease-out hover:scale-[1.02]"
+          />
+        </div>
+
+        <div class="min-w-0" data-featured-content>
+          <Badge variant="secondary" class="normal-case tracking-[0.08em]">
+            {post.data.category}
+          </Badge>
+
+          <h3 class="font-display mt-4 text-2xl tracking-tight text-foreground md:text-3xl lg:text-4xl">
+            <a
+              href={href}
+              class="transition-colors hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+            >
+              {post.data.title}
+            </a>
+          </h3>
+
+          <p class="text-body mt-4 max-w-xl text-pretty">{post.data.description}</p>
+
+          <dl class="mt-5 flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted">
+            <div class="flex gap-2">
+              <dt class="sr-only">Reading time</dt>
+              <dd>{post.data.readingTime}</dd>
+            </div>
+            <div class="flex gap-2">
+              <dt class="sr-only">Published</dt>
+              <dd>
+                <time datetime={post.data.publishDate.toISOString()}>
+                  {formatPublishDate(post.data.publishDate)}
+                </time>
+              </dd>
+            </div>
+          </dl>
+
+          <div class="mt-8">
+            <Button href={href} size="md">
+              Read Article
+            </Button>
+          </div>
+        </div>
+      </div>
+    </article>
+  </Container>
+</Section>

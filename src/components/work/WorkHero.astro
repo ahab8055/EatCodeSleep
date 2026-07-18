@@ -1,0 +1,60 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import WorkBackground from '@/components/work/WorkBackground.astro';
+import { workHero } from '@/data/projects';
+---
+
+<section
+  id="work-hero"
+  class="relative flex min-h-[70svh] items-center overflow-hidden pt-16 md:min-h-[80svh] md:pt-20"
+  aria-labelledby="work-hero-heading"
+  data-work-hero
+>
+  <WorkBackground />
+
+  <Container class="relative z-10 w-full py-16 md:py-20 lg:py-24">
+    <div class="mx-auto max-w-3xl text-center">
+      <p class="text-label text-secondary" data-work-hero-label>Our Work</p>
+
+      <Heading as={1} size="display" id="work-hero-heading" class="mt-5 md:mt-6" balance={false}>
+        {
+          workHero.headingLines.map((line) => (
+            <span class="block overflow-hidden">
+              <span class="block" data-work-hero-line>
+                {line}
+              </span>
+            </span>
+          ))
+        }
+      </Heading>
+
+      <p
+        class="text-body-lg mx-auto mt-6 max-w-2xl text-pretty md:mt-8"
+        data-work-hero-copy
+      >
+        {workHero.description}
+      </p>
+
+      <div class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mt-10">
+        <div data-work-hero-action>
+          <Button href={workHero.primaryCta.href} size="lg" class="w-full sm:w-auto">
+            {workHero.primaryCta.label}
+          </Button>
+        </div>
+        <div data-work-hero-action>
+          <Button
+            href={workHero.secondaryCta.href}
+            variant="secondary"
+            size="lg"
+            showArrow={false}
+            class="w-full sm:w-auto"
+          >
+            {workHero.secondaryCta.label}
+          </Button>
+        </div>
+      </div>
+    </div>
+  </Container>
+</section>

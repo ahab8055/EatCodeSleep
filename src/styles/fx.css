@@ -1,0 +1,292 @@
+/**
+ * Site-wide atmospheric FX, custom cursor, and view-transition chrome.
+ * Loaded from global.css. Respects prefers-reduced-motion via media queries.
+ */
+
+/* —— Atmospheric layers —— */
+.fx-atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.fx-atmosphere__aurora {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(ellipse 45% 35% at 15% 20%, rgb(79 70 229 / 0.22), transparent 55%),
+    radial-gradient(ellipse 40% 30% at 85% 25%, rgb(6 182 212 / 0.16), transparent 50%),
+    radial-gradient(ellipse 50% 40% at 50% 90%, rgb(34 197 94 / 0.08), transparent 55%),
+    radial-gradient(ellipse 30% 25% at 60% 40%, rgb(79 70 229 / 0.1), transparent 60%);
+  filter: blur(6px);
+  animation: fx-aurora 22s ease-in-out infinite alternate;
+}
+
+.fx-atmosphere__grid {
+  position: absolute;
+  inset: -10%;
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: radial-gradient(ellipse 75% 65% at 50% 35%, black 15%, transparent 72%);
+  animation: fx-grid-drift 48s linear infinite;
+  opacity: 0.5;
+}
+
+.fx-atmosphere__noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.28;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+  background-size: 200px 200px;
+  animation: fx-noise-shift 8s steps(6) infinite;
+}
+
+.fx-atmosphere__particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.45);
+  box-shadow: 0 0 10px rgb(6 182 212 / 0.35);
+  animation: fx-particle-float var(--fx-duration, 12s) ease-in-out infinite;
+  animation-delay: var(--fx-delay, 0s);
+  opacity: var(--fx-opacity, 0.35);
+}
+
+/* —— Custom cursor (desktop / fine pointer) —— */
+.fx-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  width: 10px;
+  height: 10px;
+  margin: -5px 0 0 -5px;
+  border-radius: 9999px;
+  background: rgb(6 182 212 / 0.95);
+  box-shadow:
+    0 0 12px rgb(6 182 212 / 0.65),
+    0 0 28px rgb(79 70 229 / 0.35);
+  pointer-events: none;
+  opacity: 0;
+  transform: translate3d(-100px, -100px, 0) scale(1);
+  transition:
+    width 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    height 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    margin 0.25s cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 0.25s ease,
+    box-shadow 0.25s ease,
+    opacity 0.2s ease;
+}
+
+.fx-cursor.is-visible {
+  opacity: 1;
+}
+
+.fx-cursor.is-hover {
+  width: 42px;
+  height: 42px;
+  margin: -21px 0 0 -21px;
+  background: rgb(79 70 229 / 0.22);
+  box-shadow:
+    0 0 0 1px rgb(6 182 212 / 0.45),
+    0 0 24px rgb(79 70 229 / 0.45);
+}
+
+.fx-cursor.is-pressed {
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  opacity: 0.75;
+}
+
+html.has-custom-cursor,
+html.has-custom-cursor * {
+  cursor: none !important;
+}
+
+html.has-custom-cursor input,
+html.has-custom-cursor textarea,
+html.has-custom-cursor select,
+html.has-custom-cursor [contenteditable='true'] {
+  cursor: text !important;
+}
+
+/* —— Page transition wipe —— */
+.fx-page-wipe {
+  position: fixed;
+  inset: 0;
+  z-index: 10000;
+  pointer-events: none;
+  opacity: 0;
+  background:
+    linear-gradient(
+      135deg,
+      rgb(5 8 22 / 0.97) 0%,
+      rgb(79 70 229 / 0.55) 42%,
+      rgb(6 182 212 / 0.45) 68%,
+      rgb(5 8 22 / 0.97) 100%
+    );
+  transform: translateY(100%);
+  transition: none;
+}
+
+.fx-page-wipe.is-leaving {
+  opacity: 1;
+  animation: fx-wipe-cover 0.42s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+}
+
+.fx-page-wipe.is-entering {
+  opacity: 1;
+  animation: fx-wipe-reveal 0.48s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes fx-aurora {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+    opacity: 0.85;
+  }
+  50% {
+    transform: translate3d(2%, -1.5%, 0) scale(1.05) rotate(1.5deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translate3d(-2%, 2%, 0) scale(1.02) rotate(-1deg);
+    opacity: 0.9;
+  }
+}
+
+@keyframes fx-grid-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 72px 72px;
+  }
+}
+
+@keyframes fx-noise-shift {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  20% {
+    transform: translate3d(-1%, 1%, 0);
+  }
+  40% {
+    transform: translate3d(1%, -0.5%, 0);
+  }
+  60% {
+    transform: translate3d(-0.5%, -1%, 0);
+  }
+  80% {
+    transform: translate3d(0.5%, 0.5%, 0);
+  }
+}
+
+@keyframes fx-particle-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: var(--fx-opacity, 0.35);
+  }
+  50% {
+    transform: translate3d(var(--fx-dx, 12px), var(--fx-dy, -28px), 0);
+    opacity: calc(var(--fx-opacity, 0.35) * 1.6);
+  }
+}
+
+@keyframes fx-wipe-cover {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fx-wipe-reveal {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-100%);
+  }
+}
+
+/* View Transitions API root crossfade */
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) {
+    animation: fx-vt-fade-out 0.35s ease-out both;
+  }
+
+  ::view-transition-new(root) {
+    animation: fx-vt-fade-in 0.45s ease-out both;
+  }
+}
+
+@keyframes fx-vt-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fx-vt-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fx-atmosphere__aurora,
+  .fx-atmosphere__grid,
+  .fx-atmosphere__noise,
+  .fx-atmosphere__particle {
+    animation: none !important;
+  }
+
+  .fx-page-wipe,
+  .fx-cursor {
+    display: none !important;
+  }
+
+  @supports (view-transition-name: none) {
+    ::view-transition-old(root),
+    ::view-transition-new(root) {
+      animation: none !important;
+    }
+  }
+}
+
+/* Freeze continuous FX on small / touch devices — keep a static wash */
+@media (max-width: 768px), (pointer: coarse) {
+  .fx-atmosphere__aurora,
+  .fx-atmosphere__grid,
+  .fx-atmosphere__noise {
+    animation: none !important;
+  }
+
+  .fx-atmosphere__particle {
+    display: none !important;
+  }
+
+  .fx-atmosphere__aurora {
+    filter: none;
+    opacity: 0.85;
+  }
+
+  .fx-atmosphere__noise {
+    opacity: 0.14;
+  }
+}
+
+@media (pointer: coarse) {
+  .fx-cursor {
+    display: none !important;
+  }
+}

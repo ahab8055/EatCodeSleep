@@ -1,0 +1,68 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import WorkBackground from '@/components/work/WorkBackground.astro';
+import { caseStudySteps } from '@/data/projects';
+---
+
+<Section
+  id="case-study-preview"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="case-study-preview-heading"
+  data-case-study-preview
+>
+  <WorkBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="How We Frame Case Studies"
+      heading={['Challenge to impact,', 'told with clarity.']}
+      description="Every engagement is documented around the problem, the solution, the technology choices, and the measurable outcome."
+      headingId="case-study-preview-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ol
+      class="relative mx-auto grid max-w-4xl gap-4 md:grid-cols-4 md:gap-5"
+      data-case-study-steps
+    >
+      {
+        caseStudySteps.map((step, index) => (
+          <li
+            class="relative rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 backdrop-blur-xl"
+            data-case-study-step
+          >
+            {index < caseStudySteps.length - 1 && (
+              <span
+                class="case-study-arrow pointer-events-none absolute -right-3 top-1/2 z-10 hidden -translate-y-1/2 text-secondary md:block"
+                aria-hidden="true"
+              >
+                →
+              </span>
+            )}
+            <p class="text-label text-secondary">
+              {String(index + 1).padStart(2, '0')}
+            </p>
+            <h3 class="mt-3 font-display text-lg tracking-tight text-foreground">
+              {step.title}
+            </h3>
+            <p class="text-body-sm mt-2 text-pretty">{step.description}</p>
+            {index < caseStudySteps.length - 1 && (
+              <p class="mt-4 text-center text-secondary md:hidden" aria-hidden="true">
+                ↓
+              </p>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+</Section>
+
+<style>
+  .case-study-arrow {
+    font-size: 0.875rem;
+  }
+</style>

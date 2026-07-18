@@ -1,0 +1,59 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import { isAbsoluteHttpUrl } from '@/lib/booking';
+import { withTrailingSlash } from '@/utils/paths';
+
+export type FinalCtaButtonVariant = 'primary' | 'secondary';
+
+export interface Props {
+  href: string;
+  variant?: FinalCtaButtonVariant;
+  class?: string;
+  ariaLabel?: string;
+  showArrow?: boolean;
+  external?: boolean;
+}
+
+const {
+  href,
+  variant = 'primary',
+  class: className,
+  ariaLabel,
+  showArrow = variant === 'primary',
+  external = false,
+}: Props = Astro.props;
+
+const isExternal = external || isAbsoluteHttpUrl(href);
+const resolvedHref = isExternal ? href : withTrailingSlash(href);
+
+const variantClasses: Record<FinalCtaButtonVariant, string> = {
+  primary:
+    'bg-white text-background shadow-[0_0_40px_rgb(255_255_255_/0.18)] hover:scale-[1.03] hover:shadow-[0_0_56px_rgb(255_255_255_/0.28)]',
+  secondary:
+    'border border-white/30 bg-transparent text-foreground backdrop-blur-md hover:bg-white/10 hover:border-white/45',
+};
+---
+
+<a
+  href={resolvedHref}
+  aria-label={ariaLabel}
+  target={isExternal ? '_blank' : undefined}
+  rel={isExternal ? 'noopener noreferrer' : undefined}
+  class={cn(
+    'group inline-flex items-center justify-center gap-2 rounded-[var(--radius-ds)] px-7 py-3.5 text-base font-medium transition-[transform,box-shadow,background-color,border-color] duration-300 ease-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background gpu sm:px-8 sm:py-4 sm:text-lg',
+    variantClasses[variant],
+    className,
+  )}
+  data-cta-action
+>
+  <slot />
+  {
+    showArrow && (
+      <ArrowUpRight
+        class="size-4 transition-transform duration-300 ease-out group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:size-5"
+        aria-hidden="true"
+      />
+    )
+  }
+</a>

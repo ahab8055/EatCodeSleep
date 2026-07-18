@@ -1,0 +1,163 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import AboutHero from '@/components/about/AboutHero.astro';
+import StorySection from '@/components/about/StorySection.astro';
+import EngineeringPhilosophy from '@/components/about/EngineeringPhilosophy.astro';
+import ValuesSection from '@/components/about/ValuesSection.astro';
+import TeamCapabilities from '@/components/about/TeamCapabilities.astro';
+import TechnologyMindset from '@/components/about/TechnologyMindset.astro';
+import Timeline from '@/components/about/Timeline.astro';
+import AboutCTA from '@/components/about/AboutCTA.astro';
+import { aboutPageJsonLd, aboutPageSeo } from '@/data/about';
+---
+
+<MainLayout
+  title={aboutPageSeo.title}
+  description={aboutPageSeo.description}
+  seo={{
+    canonical: aboutPageSeo.canonical,
+    keywords: [...aboutPageSeo.keywords],
+    openGraph: {
+      title: aboutPageSeo.socialTitle,
+      description: aboutPageSeo.description,
+      url: aboutPageSeo.canonical,
+      type: 'website',
+    },
+    twitter: {
+      title: aboutPageSeo.socialTitle,
+      description: aboutPageSeo.description,
+    },
+    jsonLd: aboutPageJsonLd,
+  }}
+>
+  <AboutHero />
+  <StorySection />
+  <EngineeringPhilosophy />
+  <ValuesSection />
+  <TeamCapabilities />
+  <TechnologyMindset />
+  <Timeline />
+  <AboutCTA />
+</MainLayout>
+
+<script>
+  import {
+    playAboutHero,
+    playAboutReveal,
+    startAboutAmbient,
+  } from '@/lib/about-page-animations';
+  import { gsap } from '@/lib/gsap';
+  import { getPrefersReducedMotion } from '@/hooks/useReducedMotion';
+  import { ANIMATION } from '@/lib/constants';
+
+  function initAboutPage(): void {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const hero = document.querySelector<HTMLElement>('[data-about-hero]');
+    if (hero) playAboutHero(hero);
+
+    const story = document.querySelector<HTMLElement>('[data-about-story]');
+    if (story) {
+      playAboutReveal(
+        story,
+        '[data-about-reveal-line], [data-about-story-copy] > p, [data-about-highlight]',
+        'storyAnimated',
+      );
+    }
+
+    const philosophy = document.querySelector<HTMLElement>('[data-about-philosophy]');
+    if (philosophy) {
+      playAboutReveal(
+        philosophy,
+        '[data-philosophy-panel], [data-philosophy-card]',
+        'philosophyAnimated',
+        '[data-philosophy-panel]',
+      );
+    }
+
+    const values = document.querySelector<HTMLElement>('[data-about-values]');
+    if (values) {
+      playAboutReveal(
+        values,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'valuesHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playAboutReveal(values, '[data-value-card]', 'valuesCardsAnimated', '[data-values-grid]');
+    }
+
+    const team = document.querySelector<HTMLElement>('[data-about-team]');
+    if (team) {
+      playAboutReveal(
+        team,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'teamHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playAboutReveal(
+        team,
+        '[data-team-capability], [data-team-visual]',
+        'teamCardsAnimated',
+        '[data-team-capabilities]',
+      );
+    }
+
+    const tech = document.querySelector<HTMLElement>('[data-about-tech]');
+    if (tech) {
+      playAboutReveal(
+        tech,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'techHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playAboutReveal(
+        tech,
+        '[data-tech-criterion], [data-tech-category]',
+        'techCardsAnimated',
+        '[data-tech-categories]',
+      );
+    }
+
+    const timeline = document.querySelector<HTMLElement>('[data-about-timeline]');
+    if (timeline) {
+      playAboutReveal(
+        timeline,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'timelineHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playAboutReveal(
+        timeline,
+        '[data-timeline-item]',
+        'timelineItemsAnimated',
+        '[data-timeline-list]',
+      );
+    }
+
+    const cta = document.querySelector<HTMLElement>('[data-about-cta]');
+    if (cta) {
+      const panel = cta.querySelector<HTMLElement>('[data-about-cta-panel]');
+      if (panel && !getPrefersReducedMotion() && cta.dataset.ctaAnimated !== 'true') {
+        cta.dataset.ctaAnimated = 'true';
+        gsap.fromTo(
+          panel,
+          { opacity: 0, y: 24, scale: 0.985 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: ANIMATION.duration.slow,
+            ease: ANIMATION.ease.power3,
+            scrollTrigger: { trigger: panel, start: 'top 85%', once: true },
+          },
+        );
+      }
+    }
+
+    startAboutAmbient(main);
+  }
+
+  initAboutPage();
+  document.addEventListener('astro:page-load', initAboutPage);
+</script>

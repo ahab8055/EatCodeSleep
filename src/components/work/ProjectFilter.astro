@@ -1,0 +1,52 @@
+---
+import { projectFilters } from '@/data/projects';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn('project-filter', className)}
+  data-project-filter-bar
+  role="group"
+  aria-label="Filter projects by category"
+>
+  <div
+    class="project-filter__scroller -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+  >
+    {
+      projectFilters.map((filter) => (
+        <button
+          type="button"
+          class="project-filter__btn inline-flex shrink-0 items-center rounded-lg border border-transparent px-3.5 py-2 text-sm leading-none text-muted transition-[color,background-color,border-color] duration-200 hover:border-border hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+          data-project-filter={filter.id}
+          data-active={filter.id === 'all' ? 'true' : 'false'}
+          aria-pressed={filter.id === 'all' ? 'true' : 'false'}
+        >
+          {filter.label}
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .project-filter__scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .project-filter__scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .project-filter__btn[data-active='true'] {
+    border-color: rgb(6 182 212 / 0.45);
+    background: rgb(6 182 212 / 0.1);
+    color: var(--color-foreground);
+  }
+</style>

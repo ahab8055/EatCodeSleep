@@ -1,0 +1,22 @@
+---
+/**
+ * Hero visual: lightweight floating 3D code cube (R3F).
+ * Static fallback lives inside CodeCube when WebGL / motion is unavailable.
+ */
+import CodeCube from '@/components/three/CodeCube';
+---
+
+<div
+  class="hero-visual relative mx-auto aspect-[4/5] w-full max-w-[34rem] md:aspect-square lg:max-w-none"
+  data-hero-visual-root
+>
+  <div
+    class="absolute left-1/2 top-1/2 size-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[90px] gpu"
+    data-hero-glow
+  >
+  </div>
+
+  <div class="relative z-10 h-full min-h-[18rem] w-full sm:min-h-[22rem]" data-hero-float>
+    <CodeCube client:idle className="h-full w-full" />
+  </div>
+</div>

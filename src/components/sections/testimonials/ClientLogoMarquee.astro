@@ -1,0 +1,109 @@
+---
+import { clientLogos } from '@/data/testimonials';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+const loopItems = [...clientLogos, ...clientLogos];
+---
+
+<div
+  class={cn(
+    'client-marquee relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/30 py-5 backdrop-blur-xl',
+    className,
+  )}
+  data-client-marquee
+>
+  <div class="client-marquee__fade client-marquee__fade--left" aria-hidden="true"></div>
+  <div class="client-marquee__fade client-marquee__fade--right" aria-hidden="true"></div>
+
+  <div class="client-marquee__track" aria-hidden="true">
+    <ul class="client-marquee__list">
+      {
+        loopItems.map((logo) => (
+          <li>
+            <span class="client-marquee__logo font-display tracking-tight">{logo.name}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+
+  <p class="sr-only">
+    Client partners include {clientLogos.map((logo) => logo.name).join(', ')}.
+  </p>
+</div>
+
+<style>
+  .client-marquee__track {
+    overflow: hidden;
+  }
+
+  .client-marquee__list {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    gap: 3rem;
+    padding-inline: 1.5rem;
+    animation: client-marquee-scroll 38s linear infinite;
+  }
+
+  .client-marquee:hover .client-marquee__list {
+    animation-play-state: paused;
+  }
+
+  .client-marquee__logo {
+    display: inline-block;
+    font-size: 1.125rem;
+    color: rgb(255 255 255 / 0.28);
+    transition: color 250ms ease;
+    white-space: nowrap;
+  }
+
+  .client-marquee__logo:hover {
+    color: rgb(255 255 255 / 0.85);
+  }
+
+  .client-marquee__fade {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 4rem;
+  }
+
+  .client-marquee__fade--left {
+    left: 0;
+    background: linear-gradient(90deg, rgb(5 8 22 / 0.95), transparent);
+  }
+
+  .client-marquee__fade--right {
+    right: 0;
+    background: linear-gradient(270deg, rgb(5 8 22 / 0.95), transparent);
+  }
+
+  @keyframes client-marquee-scroll {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .client-marquee__list {
+      animation: none;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+      row-gap: 1rem;
+      column-gap: 2rem;
+    }
+  }
+</style>

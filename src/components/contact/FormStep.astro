@@ -1,0 +1,99 @@
+---
+import type { ContactChoiceOption } from '@/types/contact';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  step: number;
+  title: string;
+  description?: string;
+  fieldName?: string;
+  options?: ContactChoiceOption[];
+  class?: string;
+}
+
+const {
+  step,
+  title,
+  description,
+  fieldName,
+  options = [],
+  class: className,
+}: Props = Astro.props;
+---
+
+<div
+  class={cn('form-step space-y-5', className)}
+  data-form-step={step}
+  data-active="false"
+  hidden={step !== 1}
+>
+  <div>
+    <h3 class="font-display text-xl tracking-tight text-foreground">{title}</h3>
+    {description && <p class="text-body mt-2 text-pretty">{description}</p>}
+  </div>
+
+  {
+    options.length > 0 && fieldName && (
+      <div
+        class="grid grid-cols-1 gap-3 sm:grid-cols-2"
+        data-choice-group={fieldName}
+        role="group"
+        aria-label={title}
+      >
+        <input type="hidden" name={fieldName} value="" />
+        {options.map((option) => (
+          <button
+            type="button"
+            class="choice-option relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-white/[0.03] px-4 py-4 text-left text-sm text-muted transition-[border-color,background-color,color,transform,box-shadow] duration-300 hover:border-white/15 hover:bg-white/[0.05] hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+            data-choice-option
+            data-choice-field={fieldName}
+            data-choice-value={option.id}
+            data-selected="false"
+            aria-pressed="false"
+          >
+            <span class="relative z-10 block font-medium">{option.label}</span>
+          </button>
+        ))}
+      </div>
+    )
+  }
+
+  <p class="text-sm text-red-400" data-field-error={fieldName} hidden></p>
+
+  <slot />
+</div>
+
+<style>
+  .form-step[data-active='true'] {
+    animation: form-step-in 0.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .choice-option[data-selected='true'] {
+    border-color: rgb(6 182 212 / 0.55);
+    background: rgb(6 182 212 / 0.12);
+    color: var(--color-foreground);
+    transform: translateY(-4px) scale(1.02);
+    box-shadow:
+      0 16px 40px rgb(0 0 0 / 0.35),
+      0 0 28px rgb(6 182 212 / 0.18);
+  }
+
+  @keyframes form-step-in {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-step[data-active='true'],
+    .choice-option[data-selected='true'] {
+      animation: none;
+      transform: none;
+    }
+  }
+</style>

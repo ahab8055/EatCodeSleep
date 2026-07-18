@@ -1,0 +1,93 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import { buildCanonicalUrl } from '@/utils/seo';
+
+const canonical = buildCanonicalUrl('/privacy');
+const updated = 'July 14, 2026';
+---
+
+<MainLayout
+  title="Privacy Policy"
+  description="How EatCodeSleep collects, uses, and protects personal information when you use our website and services."
+  seo={{
+    canonical,
+    keywords: ['privacy policy', 'EatCodeSleep', 'data protection'],
+    openGraph: {
+      title: 'Privacy Policy',
+      description: 'How EatCodeSleep handles personal information.',
+      url: canonical,
+      type: 'website',
+    },
+  }}
+>
+  <section class="relative overflow-hidden pt-24 md:pt-28" aria-labelledby="privacy-heading">
+    <Container class="relative z-10 max-w-3xl pb-20 md:pb-28">
+      <p class="text-label text-secondary">Legal</p>
+      <Heading as={1} size="lg" id="privacy-heading" class="mt-4">
+        Privacy Policy
+      </Heading>
+      <p class="mt-4 text-muted">Last updated: {updated}</p>
+
+      <div class="prose-legal mt-10 space-y-8 text-muted">
+        <section>
+          <h2 class="font-display text-xl text-foreground">Overview</h2>
+          <p class="mt-3 leading-relaxed">
+            EatCodeSleep (“we”, “us”) builds software products and digital systems for clients. This
+            policy explains what information we collect through eatcodesleep.org and how we use it.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-xl text-foreground">Information we collect</h2>
+          <ul class="mt-3 list-disc space-y-2 pl-5 leading-relaxed">
+            <li>Contact details you submit (name, email, company, project details).</li>
+            <li>Basic technical data such as browser type, device, and approximate location via IP.</li>
+            <li>Usage analytics that help us understand which pages are useful (aggregated when possible).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="font-display text-xl text-foreground">How we use information</h2>
+          <ul class="mt-3 list-disc space-y-2 pl-5 leading-relaxed">
+            <li>Respond to inquiries and qualify project fit.</li>
+            <li>Operate, secure, and improve the website.</li>
+            <li>Send follow-ups related to your request (not unrelated marketing spam).</li>
+          </ul>
+        </section>
+
+        <section>
+          <h2 class="font-display text-xl text-foreground">Sharing</h2>
+          <p class="mt-3 leading-relaxed">
+          We do not sell personal information. We may share data with trusted processors (hosting,
+            analytics, email, and Google Calendar Appointment Schedule / Google Meet when you book a
+            discovery call) solely to run the site or respond to you, under appropriate safeguards.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-xl text-foreground">Retention & rights</h2>
+          <p class="mt-3 leading-relaxed">
+            We keep contact submissions only as long as needed for the conversation or legal
+            obligations. You may request access, correction, or deletion of your information by
+            emailing
+            <a class="text-secondary underline-offset-4 hover:underline" href="mailto:hello@eatcodesleep.com"
+              >hello@eatcodesleep.com</a
+            >.
+          </p>
+        </section>
+
+        <section>
+          <h2 class="font-display text-xl text-foreground">Contact</h2>
+          <p class="mt-3 leading-relaxed">
+            Questions about this policy: <a
+              class="text-secondary underline-offset-4 hover:underline"
+              href="mailto:hello@eatcodesleep.com">hello@eatcodesleep.com</a
+            >.
+          </p>
+        </section>
+      </div>
+    </Container>
+  </section>
+</MainLayout>

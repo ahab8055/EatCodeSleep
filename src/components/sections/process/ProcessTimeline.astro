@@ -1,0 +1,27 @@
+---
+import ProcessStep from '@/components/sections/process/ProcessStep.astro';
+import ProcessJourney from '@/components/visuals/ProcessJourney.astro';
+import { processSteps } from '@/data/process';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div class={cn('relative', className)} data-process-timeline>
+  <ProcessJourney />
+  <ol class="relative z-[1]" aria-label="EatCodeSleep delivery process">
+    {
+      processSteps.map((step, index) => (
+        <ProcessStep
+          step={step}
+          index={index}
+          isLast={index === processSteps.length - 1}
+        />
+      ))
+    }
+  </ol>
+</div>

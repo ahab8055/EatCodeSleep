@@ -1,0 +1,79 @@
+---
+/**
+ * Soft atmosphere for the Process section.
+ */
+---
+
+<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="process-bg-base absolute inset-0"></div>
+  <div class="process-bg-grid absolute inset-0 opacity-[0.16]"></div>
+
+  <div
+    class="absolute left-[-10%] top-1/4 size-[28rem] rounded-full bg-primary/12 blur-[120px] gpu md:size-[36rem]"
+    data-process-glow
+  >
+  </div>
+  <div
+    class="absolute right-[-8%] top-[55%] size-[24rem] rounded-full bg-secondary/10 blur-[110px] gpu"
+    data-process-glow
+  >
+  </div>
+
+  <span class="process-particle process-particle-1" data-process-particle></span>
+  <span class="process-particle process-particle-2" data-process-particle></span>
+  <span class="process-particle process-particle-3" data-process-particle></span>
+  <span class="process-particle process-particle-4" data-process-particle></span>
+  <span class="process-particle process-particle-5" data-process-particle></span>
+</div>
+
+<style>
+  .process-bg-base {
+    background:
+      radial-gradient(ellipse 65% 40% at 20% 20%, rgb(79 70 229 / 0.12), transparent 55%),
+      radial-gradient(ellipse 55% 35% at 85% 70%, rgb(6 182 212 / 0.08), transparent 50%),
+      linear-gradient(180deg, #050816 0%, #0b1023 42%, #050816 100%);
+  }
+
+  .process-bg-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 45%, black 20%, transparent 75%);
+  }
+
+  .process-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.35);
+    transform: translateZ(0);
+  }
+
+  .process-particle-1 {
+    left: 16%;
+    top: 24%;
+    opacity: 0.28;
+  }
+  .process-particle-2 {
+    left: 34%;
+    top: 62%;
+    opacity: 0.2;
+  }
+  .process-particle-3 {
+    left: 58%;
+    top: 18%;
+    opacity: 0.26;
+  }
+  .process-particle-4 {
+    left: 76%;
+    top: 48%;
+    opacity: 0.22;
+  }
+  .process-particle-5 {
+    left: 88%;
+    top: 78%;
+    opacity: 0.18;
+  }
+</style>

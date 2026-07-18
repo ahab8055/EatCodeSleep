@@ -1,0 +1,29 @@
+---
+/**
+ * Fixed site-wide atmosphere: aurora, drifting grid, noise, floating particles.
+ * Particle count stays low; mobile CSS freezes expensive layers.
+ */
+const particles = [
+  { left: '14%', top: '24%', duration: '16s', delay: '0s', opacity: '0.28', dx: '16px', dy: '-28px' },
+  { left: '48%', top: '18%', duration: '14s', delay: '0.8s', opacity: '0.3', dx: '10px', dy: '-36px' },
+  { left: '72%', top: '42%', duration: '18s', delay: '1.6s', opacity: '0.24', dx: '-14px', dy: '-22px' },
+  { left: '28%', top: '68%', duration: '15s', delay: '2.2s', opacity: '0.2', dx: '-10px', dy: '-20px' },
+] as const;
+---
+
+<div class="fx-atmosphere" data-fx-atmosphere aria-hidden="true" transition:persist="fx-atmosphere">
+  <div class="fx-atmosphere__aurora"></div>
+  <div class="fx-atmosphere__grid"></div>
+  <div class="fx-atmosphere__noise"></div>
+  {
+    particles.map((p) => (
+      <span
+        class="fx-atmosphere__particle"
+        style={`left:${p.left};top:${p.top};--fx-duration:${p.duration};--fx-delay:${p.delay};--fx-opacity:${p.opacity};--fx-dx:${p.dx};--fx-dy:${p.dy}`}
+      />
+    ))
+  }
+</div>
+
+<div class="fx-page-wipe" data-page-wipe aria-hidden="true" transition:persist="fx-page-wipe"></div>
+<div class="fx-cursor" data-fx-cursor aria-hidden="true" transition:persist="fx-cursor"></div>

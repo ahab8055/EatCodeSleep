@@ -1,0 +1,142 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '@/layouts/MainLayout.astro';
+import BlogHero from '@/components/blog/BlogHero.astro';
+import FeaturedArticle from '@/components/blog/FeaturedArticle.astro';
+import ArticleGrid from '@/components/blog/ArticleGrid.astro';
+import NewsletterSignup from '@/components/blog/NewsletterSignup.astro';
+import BlogCTA from '@/components/blog/BlogCTA.astro';
+import {
+  blogPageSeo,
+  sortPostsByDate,
+} from '@/data/blog';
+import { buildCanonicalUrl } from '@/utils/seo';
+import { SITE } from '@/lib/constants';
+
+const allPosts = sortPostsByDate(
+  (await getCollection('blog', ({ data }) => !data.draft)),
+);
+
+const featuredPost =
+  allPosts.find((post) => post.data.featured) ?? allPosts[0];
+
+const gridPosts = allPosts.filter((post) => post.id !== featuredPost?.id);
+
+const blogJsonLd = {
+  type: 'Blog',
+  data: {
+    name: 'EatCodeSleep Insights',
+    description: blogPageSeo.description,
+    url: buildCanonicalUrl('/blog'),
+    publisher: {
+      '@type': 'Organization',
+      name: SITE.name,
+      url: SITE.url,
+    },
+    blogPost: allPosts.slice(0, 6).map((post) => ({
+      '@type': 'BlogPosting',
+      headline: post.data.title,
+      description: post.data.description,
+      datePublished: post.data.publishDate.toISOString(),
+      author: {
+        '@type': 'Organization',
+        name: post.data.author,
+      },
+      url: buildCanonicalUrl(`/blog/${post.id}`),
+    })),
+  },
+};
+---
+
+<MainLayout
+  title={blogPageSeo.title}
+  description={blogPageSeo.description}
+  seo={{
+    canonical: buildCanonicalUrl('/blog'),
+    keywords: [...blogPageSeo.keywords],
+    openGraph: {
+      title: blogPageSeo.socialTitle,
+      description: blogPageSeo.description,
+      url: buildCanonicalUrl('/blog'),
+      type: 'website',
+    },
+    twitter: {
+      title: blogPageSeo.socialTitle,
+      description: blogPageSeo.description,
+    },
+    jsonLd: blogJsonLd,
+  }}
+>
+  <BlogHero />
+  {featuredPost && <FeaturedArticle post={featuredPost} />}
+  <ArticleGrid posts={gridPosts.length ? gridPosts : allPosts} />
+  <NewsletterSignup />
+  <BlogCTA />
+</MainLayout>
+
+<script>
+  import {
+    initBlogCategoryFilter,
+    playBlogHero,
+    playBlogReveal,
+    startBlogAmbient,
+  } from '@/lib/blog-page-animations';
+  import { gsap } from '@/lib/gsap';
+  import { getPrefersReducedMotion } from '@/hooks/useReducedMotion';
+  import { ANIMATION } from '@/lib/constants';
+
+  function initBlogPage(): void {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const hero = document.querySelector<HTMLElement>('[data-blog-hero]');
+    if (hero) playBlogHero(hero);
+
+    const featured = document.querySelector<HTMLElement>('[data-featured-article]');
+    if (featured) {
+      playBlogReveal(featured, '[data-featured-panel]', 'featuredAnimated');
+    }
+
+    const grid = document.querySelector<HTMLElement>('[data-article-grid]');
+    if (grid) {
+      playBlogReveal(
+        grid,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'gridHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playBlogReveal(grid, '[data-article-card]', 'gridCardsAnimated', '[data-article-list]');
+      initBlogCategoryFilter(grid);
+    }
+
+    const newsletter = document.querySelector<HTMLElement>('[data-blog-newsletter]');
+    if (newsletter) {
+      playBlogReveal(newsletter, '[data-newsletter-panel]', 'newsletterAnimated');
+    }
+
+    const cta = document.querySelector<HTMLElement>('[data-blog-cta]');
+    if (cta) {
+      const panel = cta.querySelector<HTMLElement>('[data-blog-cta-panel]');
+      if (panel && !getPrefersReducedMotion() && cta.dataset.ctaAnimated !== 'true') {
+        cta.dataset.ctaAnimated = 'true';
+        gsap.fromTo(
+          panel,
+          { opacity: 0, y: 24, scale: 0.985 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: ANIMATION.duration.slow,
+            ease: ANIMATION.ease.power3,
+            scrollTrigger: { trigger: panel, start: 'top 85%', once: true },
+          },
+        );
+      }
+    }
+
+    startBlogAmbient(main);
+  }
+
+  initBlogPage();
+  document.addEventListener('astro:page-load', initBlogPage);
+</script>

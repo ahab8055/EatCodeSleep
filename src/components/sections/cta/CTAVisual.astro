@@ -1,0 +1,124 @@
+---
+import { Bot, Cloud, Database, Server, Workflow } from '@lucide/astro';
+import { ctaVisualNodes } from '@/data/cta';
+import { cn } from '@/lib/cn';
+import type { CtaVisualNodeId } from '@/types/cta';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+
+const icons: Record<CtaVisualNodeId, typeof Bot> = {
+  'ai-agent': Bot,
+  workflow: Workflow,
+  api: Server,
+  database: Database,
+  cloud: Cloud,
+};
+---
+
+<div
+  class={cn('cta-visual relative mx-auto w-full max-w-md', className)}
+  data-cta-visual
+  aria-hidden="true"
+>
+  <div class="cta-visual__float" data-cta-visual-float>
+    <div class="absolute inset-0 rounded-[var(--radius-ds)] bg-primary/10 blur-3xl"></div>
+
+    <div
+      class="relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/70 p-4 shadow-[0_30px_90px_rgb(0_0_0_/0.45)] backdrop-blur-xl sm:p-5"
+    >
+      <div class="mb-4 flex items-center gap-2 border-b border-border pb-3">
+        <span class="size-2 rounded-full bg-red-400/80"></span>
+        <span class="size-2 rounded-full bg-amber-300/80"></span>
+        <span class="size-2 rounded-full bg-accent/80"></span>
+        <span class="ml-2 text-[10px] text-muted">ecs.pipeline.ts</span>
+      </div>
+
+      <ol class="relative space-y-0">
+        {
+          ctaVisualNodes.map((node, index) => {
+            const Icon = icons[node.id];
+            const isLast = index === ctaVisualNodes.length - 1;
+
+            return (
+              <li class="relative flex gap-3 pb-4 last:pb-0">
+                {!isLast && <span class="cta-visual__line" />}
+                <div class="cta-visual__node relative z-10 flex size-9 shrink-0 items-center justify-center rounded-full border border-border bg-background-secondary text-secondary">
+                  <Icon class="size-3.5" />
+                </div>
+                <div class="flex min-w-0 flex-1 items-center justify-between gap-3 rounded-lg border border-border bg-white/[0.03] px-3 py-2">
+                  <span class="text-xs text-foreground sm:text-sm">{node.label}</span>
+                  <span class="text-[10px] uppercase tracking-[0.12em] text-muted">
+                    live
+                  </span>
+                </div>
+              </li>
+            );
+          })
+        }
+      </ol>
+
+      <div class="mt-4 grid grid-cols-2 gap-2">
+        <div class="rounded-lg border border-border bg-white/[0.03] p-2.5">
+          <p class="text-[9px] uppercase tracking-[0.12em] text-muted">Deploy</p>
+          <p class="mt-1 text-xs text-accent">Healthy</p>
+        </div>
+        <div class="rounded-lg border border-border bg-white/[0.03] p-2.5">
+          <p class="text-[9px] uppercase tracking-[0.12em] text-muted">Latency</p>
+          <p class="mt-1 text-xs text-foreground">38ms</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cta-visual__line {
+    position: absolute;
+    left: 1.125rem;
+    top: 2.25rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(
+      180deg,
+      rgb(6 182 212 / 0.7),
+      rgb(79 70 229 / 0.45),
+      rgb(255 255 255 / 0.08)
+    );
+    transform-origin: top center;
+    animation: cta-line-pulse 2.8s ease-in-out infinite;
+  }
+
+  .cta-visual:hover .cta-visual__line {
+    animation-duration: 1.4s;
+  }
+
+  .cta-visual__node {
+    box-shadow: 0 0 18px rgb(6 182 212 / 0.2);
+    transition: box-shadow 300ms ease;
+  }
+
+  .cta-visual:hover .cta-visual__node {
+    box-shadow: 0 0 26px rgb(6 182 212 / 0.35);
+  }
+
+  @keyframes cta-line-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+    }
+
+    50% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cta-visual__line {
+      animation: none;
+    }
+  }
+</style>

@@ -1,0 +1,65 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import FeaturedWorkBackground from '@/components/sections/work/FeaturedWorkBackground.astro';
+import ProjectCard from '@/components/sections/work/ProjectCard.astro';
+import ProjectCTA from '@/components/sections/work/ProjectCTA.astro';
+import { featuredProjects, featuredWorkSection } from '@/data/work';
+---
+
+<Section
+  id="work"
+  spacing="xl"
+  class="scroll-mt-20 overflow-hidden"
+  ariaLabelledby="work-heading"
+>
+  <FeaturedWorkBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={featuredWorkSection.label}
+      heading={featuredWorkSection.headingLines}
+      description={featuredWorkSection.description}
+      headingId="work-heading"
+      size="lg"
+      class="mb-12 md:mb-16"
+    />
+
+    <div class="flex flex-col gap-8 md:gap-10 lg:gap-12">
+      {
+        featuredProjects.map((project, index) => (
+          <ProjectCard project={project} reverse={index % 2 === 1} />
+        ))
+      }
+    </div>
+
+    <ProjectCTA class="mt-16 md:mt-20 lg:mt-24" />
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#work', async (root) => {
+      const {
+        playFeaturedWorkHeader,
+        playFeaturedProjectCards,
+        playFeaturedWorkCta,
+        startFeaturedWorkAmbient,
+      } = await import('@/lib/work-animations');
+
+      playFeaturedWorkHeader(root);
+      playFeaturedProjectCards(root);
+      playFeaturedWorkCta(root);
+      startFeaturedWorkAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

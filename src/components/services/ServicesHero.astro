@@ -1,0 +1,62 @@
+---
+import Button from '@/components/ui/Button.astro';
+import Container from '@/components/ui/Container.astro';
+import Heading from '@/components/ui/Heading.astro';
+import ServicesBackground from '@/components/services/ServicesBackground.astro';
+import ServicesHeroVisual from '@/components/services/ServicesHeroVisual.astro';
+import { servicesHero } from '@/data/services-page';
+---
+
+<section
+  id="services-hero"
+  class="relative flex min-h-[100svh] items-center overflow-hidden pt-16 md:pt-20"
+  aria-labelledby="services-hero-heading"
+  data-services-hero
+>
+  <ServicesBackground />
+
+  <Container class="relative z-10 w-full py-12 md:py-16 lg:py-20">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16">
+      <div class="max-w-xl">
+        <p class="text-label text-secondary" data-services-hero-label>Services</p>
+
+        <Heading as={1} size="display" id="services-hero-heading" class="mt-5 md:mt-6" balance={false}>
+          {
+            servicesHero.headingLines.map((line) => (
+              <span class="block overflow-hidden">
+                <span class="block" data-services-hero-line>
+                  {line}
+                </span>
+              </span>
+            ))
+          }
+        </Heading>
+
+        <p class="text-body-lg mt-6 max-w-[34rem] text-pretty md:mt-8" data-services-hero-copy>
+          {servicesHero.description}
+        </p>
+
+        <div class="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center md:mt-10">
+          <div data-services-hero-action>
+            <Button href={servicesHero.primaryCta.href} size="lg" class="w-full sm:w-auto">
+              {servicesHero.primaryCta.label}
+            </Button>
+          </div>
+          <div data-services-hero-action>
+            <Button
+              href={servicesHero.secondaryCta.href}
+              variant="secondary"
+              size="lg"
+              showArrow={false}
+              class="w-full sm:w-auto"
+            >
+              {servicesHero.secondaryCta.label}
+            </Button>
+          </div>
+        </div>
+      </div>
+
+      <ServicesHeroVisual />
+    </div>
+  </Container>
+</section>

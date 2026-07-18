@@ -1,0 +1,55 @@
+---
+import {
+  Activity,
+  Clock,
+  Gauge,
+  LayoutDashboard,
+  Shield,
+  Sparkles,
+  TrendingUp,
+  Users,
+  Zap,
+} from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { BusinessResult, BusinessResultIcon } from '@/types/work';
+
+export interface Props {
+  result: BusinessResult;
+  class?: string;
+}
+
+const { result, class: className }: Props = Astro.props;
+
+const icons: Record<BusinessResultIcon, typeof Gauge> = {
+  gauge: Gauge,
+  zap: Zap,
+  'trending-up': TrendingUp,
+  users: Users,
+  shield: Shield,
+  activity: Activity,
+  clock: Clock,
+  sparkles: Sparkles,
+  'layout-dashboard': LayoutDashboard,
+};
+
+const Icon = icons[result.icon];
+---
+
+<li
+  class={cn(
+    'flex items-start gap-3 rounded-[calc(var(--radius-ds)-4px)] border border-border bg-white/[0.03] p-3',
+    className,
+  )}
+  data-business-result
+>
+  <span
+    class="mt-0.5 inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-white/5 text-secondary"
+    aria-hidden="true"
+  >
+    <Icon class="size-3.5" />
+  </span>
+  <div class="min-w-0">
+    <p class="font-display text-base tracking-tight text-foreground">{result.metric}</p>
+    <p class="mt-0.5 text-xs text-muted">{result.description}</p>
+  </div>
+</li>

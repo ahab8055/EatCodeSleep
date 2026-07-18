@@ -1,0 +1,238 @@
+---
+/**
+ * Product architecture visualization: nodes, self-drawing lines, particles.
+ * Preserves hero animation hooks (data-hero-float / glow / particle).
+ */
+const nodes = [
+  { id: 'agent', label: 'AI Agent', x: 50, y: 12, tone: 'primary' },
+  { id: 'frontend', label: 'Frontend', x: 12, y: 42, tone: 'secondary' },
+  { id: 'api', label: 'API', x: 50, y: 42, tone: 'primary' },
+  { id: 'database', label: 'Database', x: 88, y: 42, tone: 'accent' },
+  { id: 'automation', label: 'Automation', x: 50, y: 68, tone: 'secondary' },
+  { id: 'cloud', label: 'Cloud', x: 50, y: 90, tone: 'accent' },
+] as const;
+
+const edges = [
+  { from: 'agent', to: 'api' },
+  { from: 'frontend', to: 'api' },
+  { from: 'api', to: 'database' },
+  { from: 'api', to: 'automation' },
+  { from: 'automation', to: 'cloud' },
+] as const;
+
+const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]));
+---
+
+<div
+  class="architecture-graph relative mx-auto aspect-[4/5] w-full max-w-[34rem] md:aspect-square lg:max-w-none"
+  data-hero-visual-root
+  data-architecture-graph
+  role="img"
+  aria-label="EatCodeSleep product architecture: AI Agent connected to Frontend, API, Database, Automation, and Cloud"
+>
+  <div
+    class="absolute left-1/2 top-1/2 size-[72%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[90px] gpu"
+    data-hero-glow
+  >
+  </div>
+
+  <svg
+    class="absolute inset-0 size-full"
+    viewBox="0 0 100 100"
+    preserveAspectRatio="xMidYMid meet"
+    aria-hidden="true"
+  >
+    <defs>
+      <linearGradient id="arch-line" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stop-color="#06B6D4" stop-opacity="0.15"></stop>
+        <stop offset="50%" stop-color="#4F46E5" stop-opacity="0.75"></stop>
+        <stop offset="100%" stop-color="#22C55E" stop-opacity="0.35"></stop>
+      </linearGradient>
+      <filter id="arch-glow" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="0.6" result="blur"></feGaussianBlur>
+        <feMerge>
+          <feMergeNode in="blur"></feMergeNode>
+          <feMergeNode in="SourceGraphic"></feMergeNode>
+        </feMerge>
+      </filter>
+    </defs>
+
+    {
+      edges.map((edge, i) => {
+        const a = nodeMap[edge.from];
+        const b = nodeMap[edge.to];
+        return (
+          <line
+            class="architecture-graph__edge"
+            data-arch-edge
+            x1={a.x}
+            y1={a.y}
+            x2={b.x}
+            y2={b.y}
+            stroke="url(#arch-line)"
+            stroke-width="0.45"
+            stroke-linecap="round"
+            filter="url(#arch-glow)"
+            style={`--edge-i: ${i}`}
+          />
+        );
+      })
+    }
+
+    {
+      edges.map((edge, i) => {
+        const a = nodeMap[edge.from];
+        const b = nodeMap[edge.to];
+        return (
+          <circle
+            class="architecture-graph__packet"
+            data-arch-packet
+            r="0.55"
+            fill="#06B6D4"
+            style={`--packet-i: ${i}; --x1: ${a.x}; --y1: ${a.y}; --x2: ${b.x}; --y2: ${b.y}`}
+          >
+            <animateMotion
+              dur={`${2.4 + i * 0.35}s`}
+              repeatCount="indefinite"
+              path={`M${a.x},${a.y} L${b.x},${b.y}`}
+            />
+          </circle>
+        );
+      })
+    }
+  </svg>
+
+  {
+    nodes.map((node) => (
+      <div
+        class:list={[
+          'architecture-graph__node absolute z-10 -translate-x-1/2 -translate-y-1/2 rounded-full border border-border bg-background-card/85 px-3 py-1.5 text-[11px] text-foreground shadow-[0_10px_36px_rgb(0_0_0_/0.4)] backdrop-blur-md gpu sm:text-xs',
+          `architecture-graph__node--${node.tone}`,
+        ]}
+        style={`left: ${node.x}%; top: ${node.y}%`}
+        data-hero-float
+        data-arch-node={node.id}
+      >
+        <span class="inline-flex items-center gap-2 whitespace-nowrap">
+          <span
+            class:list={[
+              'size-1.5 rounded-full',
+              node.tone === 'primary' && 'bg-primary',
+              node.tone === 'secondary' && 'bg-secondary',
+              node.tone === 'accent' && 'bg-accent',
+            ]}
+          />
+          {node.label}
+        </span>
+      </div>
+    ))
+  }
+
+  <span class="architecture-graph__particle architecture-graph__particle--1" data-hero-particle
+  ></span>
+  <span class="architecture-graph__particle architecture-graph__particle--2" data-hero-particle
+  ></span>
+  <span class="architecture-graph__particle architecture-graph__particle--3" data-hero-particle
+  ></span>
+  <span class="architecture-graph__particle architecture-graph__particle--4" data-hero-particle
+  ></span>
+  <span class="architecture-graph__particle architecture-graph__particle--5" data-hero-particle
+  ></span>
+  <span class="architecture-graph__particle architecture-graph__particle--6" data-hero-particle
+  ></span>
+</div>
+
+<style>
+  .architecture-graph__edge {
+    stroke-dasharray: 120;
+    stroke-dashoffset: 120;
+    animation: arch-draw 1.4s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    animation-delay: calc(var(--edge-i) * 0.12s + 0.35s);
+  }
+
+  .architecture-graph__node {
+    animation: arch-node-in 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .architecture-graph__node--primary {
+    animation-delay: 0.15s;
+  }
+  .architecture-graph__node--secondary {
+    animation-delay: 0.28s;
+  }
+  .architecture-graph__node--accent {
+    animation-delay: 0.4s;
+  }
+
+  .architecture-graph__particle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.4);
+    pointer-events: none;
+  }
+
+  .architecture-graph__particle--1 {
+    left: 18%;
+    top: 24%;
+    opacity: 0.35;
+  }
+  .architecture-graph__particle--2 {
+    left: 72%;
+    top: 20%;
+    opacity: 0.28;
+  }
+  .architecture-graph__particle--3 {
+    left: 28%;
+    top: 56%;
+    opacity: 0.3;
+  }
+  .architecture-graph__particle--4 {
+    left: 78%;
+    top: 58%;
+    opacity: 0.25;
+  }
+  .architecture-graph__particle--5 {
+    left: 44%;
+    top: 78%;
+    opacity: 0.22;
+  }
+  .architecture-graph__particle--6 {
+    left: 62%;
+    top: 84%;
+    opacity: 0.28;
+  }
+
+  @keyframes arch-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes arch-node-in {
+    from {
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(0.86);
+    }
+    to {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .architecture-graph__edge {
+      stroke-dashoffset: 0;
+      animation: none;
+    }
+
+    .architecture-graph__node {
+      animation: none;
+    }
+
+    .architecture-graph__packet {
+      display: none;
+    }
+  }
+</style>

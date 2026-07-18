@@ -1,0 +1,134 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import TechBadge from '@/components/ui/TechBadge.astro';
+import WorkBackground from '@/components/work/WorkBackground.astro';
+import { workTechGroups, workTechMarquee } from '@/data/projects';
+
+const loopItems = [...workTechMarquee, ...workTechMarquee];
+---
+
+<Section
+  id="work-technologies"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="work-technologies-heading"
+  data-work-technologies
+>
+  <WorkBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Technology"
+      heading={['Tools used across', 'real production systems.']}
+      description="A practical stack chosen for reliability, delivery speed, and long-term maintainability."
+      headingId="work-technologies-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6"
+      data-work-tech-groups
+      role="list"
+    >
+      {
+        workTechGroups.map((group) => (
+          <li class="min-w-0" data-work-tech-group>
+            <article class="h-full rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 backdrop-blur-xl sm:p-6">
+              <h3 class="font-display text-lg tracking-tight text-foreground">{group.title}</h3>
+              <ul class="mt-4 flex flex-wrap gap-2" aria-label={`${group.title} technologies`}>
+                {group.items.map((item) => (
+                  <li>
+                    <TechBadge class="border-white/10 bg-white/[0.07] text-foreground/90 transition-transform duration-300 hover:-translate-y-0.5 hover:border-white/20">
+                      {item}
+                    </TechBadge>
+                  </li>
+                ))}
+              </ul>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="work-tech-marquee relative mt-12 overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/30 py-4 backdrop-blur-xl md:mt-16"
+      aria-hidden="true"
+    >
+      <div class="work-tech-marquee__fade work-tech-marquee__fade--left"></div>
+      <div class="work-tech-marquee__fade work-tech-marquee__fade--right"></div>
+      <ul class="work-tech-marquee__list">
+        {
+          loopItems.map((item) => (
+            <li class="work-tech-marquee__item">
+              <span class="size-1.5 rounded-full bg-secondary/80" />
+              <span>{item}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .work-tech-marquee__list {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    animation: work-tech-marquee 40s linear infinite;
+  }
+
+  .work-tech-marquee:hover .work-tech-marquee__list {
+    animation-play-state: paused;
+  }
+
+  .work-tech-marquee__item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding-inline: 1.25rem;
+    font-size: 0.875rem;
+    color: var(--color-muted);
+    white-space: nowrap;
+  }
+
+  .work-tech-marquee__fade {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    z-index: 1;
+    width: 4rem;
+  }
+
+  .work-tech-marquee__fade--left {
+    left: 0;
+    background: linear-gradient(90deg, rgb(5 8 22 / 0.95), transparent);
+  }
+
+  .work-tech-marquee__fade--right {
+    right: 0;
+    background: linear-gradient(270deg, rgb(5 8 22 / 0.95), transparent);
+  }
+
+  @keyframes work-tech-marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .work-tech-marquee__list {
+      animation: none;
+      flex-wrap: wrap;
+      width: 100%;
+      justify-content: center;
+      row-gap: 0.75rem;
+    }
+  }
+</style>

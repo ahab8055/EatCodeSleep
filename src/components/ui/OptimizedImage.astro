@@ -1,0 +1,69 @@
+---
+/**
+ * Performance-minded image wrapper.
+ * - Local assets (ImageMetadata): Astro Image → modern formats + srcset
+ * - Remote / public strings: native img with lazy/decoding defaults
+ *
+ * Usage:
+ *   import hero from '@/assets/hero.jpg';
+ *   <OptimizedImage src={hero} alt="…" width={1200} sizes="(max-width:768px) 100vw, 800px" />
+ *   <OptimizedImage src="/photos/team.jpg" alt="…" width={800} height={600} />
+ */
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  src: ImageMetadata | string;
+  alt: string;
+  width?: number;
+  height?: number;
+  class?: string;
+  loading?: 'lazy' | 'eager';
+  decoding?: 'async' | 'auto' | 'sync';
+  fetchpriority?: 'high' | 'low' | 'auto';
+  sizes?: string;
+}
+
+const {
+  src,
+  alt,
+  width,
+  height,
+  class: className,
+  loading = 'lazy',
+  decoding = 'async',
+  fetchpriority = 'auto',
+  sizes = '(max-width: 768px) 100vw, 800px',
+}: Props = Astro.props;
+
+const isLocal = typeof src !== 'string';
+---
+
+{
+  isLocal ? (
+    <Image
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      class={cn(className)}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+      sizes={sizes}
+      densities={[1, 1.5, 2]}
+    />
+  ) : (
+    <img
+      src={src}
+      alt={alt}
+      width={width}
+      height={height}
+      class={cn(className)}
+      loading={loading}
+      decoding={decoding}
+      fetchpriority={fetchpriority}
+    />
+  )
+}

@@ -1,0 +1,17 @@
+---
+/**
+ * Alias of TechBadge for Featured Work naming consistency.
+ */
+import TechBadge from '@/components/ui/TechBadge.astro';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<TechBadge class={cn('project-tech-badge', className)}>
+  <slot />
+</TechBadge>

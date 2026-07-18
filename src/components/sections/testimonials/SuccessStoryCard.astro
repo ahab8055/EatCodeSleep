@@ -1,0 +1,33 @@
+---
+import { ArrowUpRight } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { SuccessStory } from '@/types/testimonials';
+
+export interface Props {
+  story: SuccessStory;
+  index: number;
+  class?: string;
+}
+
+const { story, index, class: className }: Props = Astro.props;
+---
+
+<article
+  class={cn(
+    'h-full rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-6 backdrop-blur-xl sm:p-7 md:p-8',
+    className,
+  )}
+  data-success-story={String(index)}
+>
+  <div class="mb-4 inline-flex size-10 items-center justify-center rounded-full border border-border bg-white/5 text-secondary">
+    <ArrowUpRight class="size-4" aria-hidden="true" />
+  </div>
+
+  <h3 class="font-display text-xl tracking-tight text-foreground md:text-2xl">
+    {story.title}
+  </h3>
+
+  <p class="text-body mt-3 text-pretty">
+    {story.summary}
+  </p>
+</article>

@@ -1,0 +1,310 @@
+---
+/**
+ * Non-stock project visual set: hero scene, dashboard, architecture, mobile.
+ * Pure CSS/SVG product visuals — no stock photography.
+ */
+import type { ProjectVisualVariant } from '@/types/projects';
+import type { ProjectMockupVariant } from '@/types/work';
+import { cn } from '@/lib/cn';
+
+export type ProjectSceneVariant = ProjectVisualVariant | ProjectMockupVariant;
+
+export interface Props {
+  variant: ProjectSceneVariant;
+  alt: string;
+  /** compact = single hero frame; gallery = 4-panel product set */
+  mode?: 'compact' | 'gallery';
+  class?: string;
+}
+
+const { variant, alt, mode = 'compact', class: className }: Props = Astro.props;
+
+const brand: Record<ProjectSceneVariant, { product: string; url: string }> = {
+  'ai-workflow': { product: 'AgentOps', url: 'agents.ecs.app' },
+  healthcare: { product: 'CareFlow', url: 'care.ecs.app' },
+  'mobile-learning': { product: 'LearnPath', url: 'learn.ecs.app' },
+  analytics: { product: 'SignalBoard', url: 'insights.ecs.app' },
+  fintech: { product: 'LedgerIQ', url: 'ledger.ecs.app' },
+};
+
+const meta = brand[variant];
+
+const archNodes: Record<ProjectSceneVariant, string[]> = {
+  'ai-workflow': ['Frontend', 'API', 'Vector DB'],
+  healthcare: ['API', 'HIPAA Store', 'Workflows'],
+  'mobile-learning': ['Sync', 'Content', 'Push'],
+  analytics: ['Ingest', 'Warehouse', 'BI'],
+  fintech: ['API', 'Ledger', 'Risk'],
+};
+
+const archCore: Record<ProjectSceneVariant, string> = {
+  'ai-workflow': 'AI Agent',
+  healthcare: 'App Core',
+  'mobile-learning': 'App Core',
+  analytics: 'API Gateway',
+  fintech: 'Payments Core',
+};
+---
+
+{
+  mode === 'gallery' ? (
+    <div
+      class={cn('project-gallery grid gap-3 sm:gap-4', className)}
+      role="img"
+      aria-label={alt}
+      data-project-gallery={variant}
+      data-project-visual={variant}
+    >
+      <div
+        class="project-gallery__frame relative aspect-[21/9] overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/70"
+        data-scene-frame="hero"
+      >
+        <div class="absolute inset-0 bg-gradient-to-r from-primary/30 via-background-secondary to-secondary/20" />
+        <div class="project-scene__mesh absolute inset-0 opacity-40" />
+        <div class="relative z-10 flex h-full flex-col justify-between p-4 sm:p-5">
+          <p class="text-label text-secondary">Hero</p>
+          <div>
+            <p class="font-display text-xl text-foreground sm:text-2xl">{meta.product}</p>
+            <p class="mt-1 text-xs text-muted">Abstract engineering visual · product atmosphere</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
+        <div
+          class="project-gallery__frame relative aspect-[4/3] overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/80"
+          data-scene-frame="dashboard"
+        >
+          <div class="flex h-full flex-col">
+            <div class="flex items-center gap-1.5 border-b border-border px-3 py-2">
+              <span class="size-2 rounded-full bg-red-400/80" />
+              <span class="size-2 rounded-full bg-amber-300/80" />
+              <span class="size-2 rounded-full bg-accent/80" />
+              <span class="ml-2 truncate font-mono text-[10px] text-muted">{meta.url}/dashboard</span>
+            </div>
+            <div class="flex flex-1 flex-col gap-2 p-3">
+              <p class="text-[10px] uppercase tracking-[0.12em] text-secondary">Dashboard</p>
+              <div class="grid grid-cols-2 gap-2">
+                <div class="rounded-lg border border-border bg-white/[0.04] p-2">
+                  <p class="text-[9px] text-muted">Live</p>
+                  <p class="font-display text-sm text-foreground">98.4%</p>
+                </div>
+                <div class="rounded-lg border border-border bg-white/[0.04] p-2">
+                  <p class="text-[9px] text-muted">Latency</p>
+                  <p class="font-display text-sm text-foreground">42ms</p>
+                </div>
+              </div>
+              <div class="mt-auto flex h-12 items-end gap-1">
+                {[40, 65, 48, 80, 70, 92, 76].map((h) => (
+                  <span
+                    class="flex-1 rounded-sm bg-gradient-to-t from-primary/50 to-secondary/60"
+                    style={`height:${h}%`}
+                  />
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div
+          class="project-gallery__frame relative aspect-[4/3] overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-secondary/90 p-3"
+          data-scene-frame="architecture"
+        >
+          <p class="text-[10px] uppercase tracking-[0.12em] text-secondary">Architecture</p>
+          <div class="mt-3 flex h-[calc(100%-1.5rem)] flex-col items-center justify-center gap-2">
+            <span class="rounded-full border border-primary/40 bg-primary/15 px-3 py-1 text-[10px] text-foreground">
+              {archCore[variant]}
+            </span>
+            <span class="h-4 w-px bg-gradient-to-b from-primary to-secondary" />
+            <div class="flex flex-wrap items-center justify-center gap-2">
+              {archNodes[variant].map((label) => (
+                <span class="rounded-full border border-border bg-white/5 px-2.5 py-1 text-[10px] text-muted">
+                  {label}
+                </span>
+              ))}
+            </div>
+            <span class="h-4 w-px bg-gradient-to-b from-secondary to-accent" />
+            <span class="rounded-full border border-accent/35 bg-accent/10 px-3 py-1 text-[10px] text-accent">
+              Cloud
+            </span>
+          </div>
+        </div>
+
+        <div
+          class="project-gallery__frame relative flex aspect-[4/3] items-center justify-center overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/70 sm:col-span-2 lg:col-span-1"
+          data-scene-frame="mobile"
+        >
+          <div class="relative pb-4">
+            <div class="h-40 w-[4.5rem] rounded-[1.25rem] border border-border bg-[#070b18] p-1.5 shadow-[0_20px_50px_rgb(0_0_0_/0.5)] sm:h-44 sm:w-20">
+              <div class="mx-auto mb-1 h-1 w-8 rounded-full bg-white/15" />
+              <div class="flex h-[calc(100%-0.5rem)] flex-col rounded-[0.9rem] bg-gradient-to-b from-primary/25 via-background-secondary to-secondary/15 p-2">
+                <p class="text-[8px] text-secondary">{meta.product}</p>
+                <div class="mt-2 space-y-1">
+                  <div class="h-1 rounded-full bg-white/20" />
+                  <div class="h-1 w-4/5 rounded-full bg-white/10" />
+                </div>
+                <div class="mt-auto space-y-1">
+                  <div class="h-6 rounded-md border border-border bg-white/[0.06]" />
+                  <div class="h-6 rounded-md border border-border bg-white/[0.04]" />
+                </div>
+              </div>
+            </div>
+            <p class="absolute -bottom-1 left-1/2 -translate-x-1/2 whitespace-nowrap text-[10px] text-muted">
+              Mobile mockup
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  ) : (
+    <div
+      class={cn('project-scene relative aspect-[16/10] overflow-hidden', className)}
+      role="img"
+      aria-label={alt}
+      data-project-scene={variant}
+      data-project-visual={variant}
+    >
+      <div class="absolute inset-0 bg-gradient-to-br from-primary/25 via-background-secondary to-secondary/15" />
+      <div class="project-scene__mesh absolute inset-0 opacity-50" />
+      <div class="absolute inset-0 flex flex-col p-4 sm:p-5">
+        <div class="mb-auto flex items-center justify-between">
+          <span class="rounded-full border border-border bg-background-card/80 px-2.5 py-1 text-[10px] text-secondary backdrop-blur-md">
+            {meta.product}
+          </span>
+          <span class="font-mono text-[10px] text-muted">{meta.url}</span>
+        </div>
+        <div class="mx-auto w-full max-w-md rounded-[var(--radius-ds)] border border-border bg-background-card/85 p-3 shadow-[0_24px_60px_rgb(0_0_0_/0.45)] backdrop-blur-xl sm:p-4">
+          <div class="mb-3 flex gap-1.5">
+            <span class="size-2 rounded-full bg-red-400/80" />
+            <span class="size-2 rounded-full bg-amber-300/80" />
+            <span class="size-2 rounded-full bg-accent/80" />
+          </div>
+
+          {variant === 'ai-workflow' && (
+            <div class="grid grid-cols-3 gap-2">
+              {['LLM', 'Agent', 'Tools', 'Docs', 'Memory', 'Ship'].map((label) => (
+                <div class="rounded-lg border border-border bg-white/[0.04] px-2 py-2 text-center text-[10px] text-muted">
+                  {label}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {variant === 'healthcare' && (
+            <div class="space-y-2">
+              <div class="flex justify-between text-[10px] text-muted">
+                <span>Active patients</span>
+                <span class="text-foreground">1,284</span>
+              </div>
+              <div class="h-1.5 overflow-hidden rounded-full bg-white/10">
+                <div class="project-scene__bar h-full w-[72%] rounded-full bg-gradient-to-r from-primary to-secondary" />
+              </div>
+              <div class="grid grid-cols-3 gap-2 pt-1">
+                {['Intake', 'Labs', 'Follow-up'].map((label) => (
+                  <div class="rounded-md border border-border bg-white/[0.03] px-1.5 py-1.5 text-center text-[9px] text-muted">
+                    {label}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {variant === 'mobile-learning' && (
+            <div class="flex items-center justify-center gap-4 py-2">
+              <div class="h-28 w-14 rounded-xl border border-border bg-background-secondary/90 p-1.5 shadow-lg">
+                <div class="h-full rounded-lg bg-gradient-to-b from-primary/30 to-secondary/20 p-1.5">
+                  <div class="mb-1 h-1 w-6 rounded-full bg-white/20" />
+                  <div class="space-y-1">
+                    <div class="h-1.5 rounded-full bg-white/15" />
+                    <div class="h-1.5 w-4/5 rounded-full bg-white/10" />
+                    <div class="mt-2 h-8 rounded-md bg-secondary/25" />
+                  </div>
+                </div>
+              </div>
+              <div class="space-y-2 text-[10px] text-muted">
+                <p class="text-foreground">Lesson progress</p>
+                <div class="h-1.5 w-24 overflow-hidden rounded-full bg-white/10">
+                  <div class="project-scene__bar h-full w-[64%] rounded-full bg-accent/80" />
+                </div>
+              </div>
+            </div>
+          )}
+
+          {variant === 'analytics' || variant === 'fintech' ? (
+            <div>
+              <div class="mb-2 flex items-center justify-between text-[10px]">
+                <span class="text-muted">{variant === 'fintech' ? 'Volume' : 'Revenue'}</span>
+                <span class="text-accent">+18.4%</span>
+              </div>
+              <svg class="h-16 w-full" viewBox="0 0 200 60" fill="none" aria-hidden="true">
+                <path
+                  class="project-scene__path"
+                  d="M0 45 C 30 40, 50 20, 80 28 S 130 10, 160 18 S 180 12, 200 8"
+                  stroke="#06B6D4"
+                  stroke-width="2"
+                  fill="none"
+                />
+              </svg>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .project-scene__mesh {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 45%, black, transparent);
+  }
+
+  .project-scene__bar {
+    transform-origin: left center;
+    animation: scene-grow 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .project-scene__path {
+    stroke-dasharray: 280;
+    stroke-dashoffset: 280;
+    animation: scene-draw 1.5s cubic-bezier(0.22, 1, 0.36, 1) forwards 0.2s;
+  }
+
+  .project-gallery__frame {
+    transition:
+      border-color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .project-gallery__frame:hover {
+    border-color: rgb(255 255 255 / 0.16);
+    box-shadow: 0 18px 48px rgb(0 0 0 / 0.35);
+    transform: translateY(-2px);
+  }
+
+  @keyframes scene-grow {
+    from {
+      transform: scaleX(0);
+    }
+  }
+
+  @keyframes scene-draw {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .project-scene__bar,
+    .project-scene__path,
+    .project-gallery__frame {
+      animation: none;
+      transform: none;
+      stroke-dashoffset: 0;
+    }
+  }
+</style>

@@ -1,0 +1,47 @@
+---
+import Container from '@/components/ui/Container.astro';
+import { serviceNavItems } from '@/data/services-page';
+---
+
+<nav
+  class="service-nav sticky top-16 z-30 border-b border-border/80 bg-background/85 backdrop-blur-xl md:top-20"
+  aria-label="Service sections"
+  data-service-nav
+>
+  <Container class="relative">
+    <div
+      class="service-nav__scroller -mx-4 flex items-center gap-1.5 overflow-x-auto px-4 py-2.5 sm:mx-0 sm:gap-2 sm:px-0 md:py-3"
+      data-service-nav-scroller
+    >
+      {
+        serviceNavItems.map((item) => (
+          <a
+            href={item.href}
+            class="service-nav__link inline-flex shrink-0 items-center rounded-lg border border-transparent px-3 py-1.5 text-sm leading-none text-muted transition-[color,background-color,border-color] duration-200 hover:border-border hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+            data-service-nav-link
+            data-active="false"
+          >
+            {item.label}
+          </a>
+        ))
+      }
+    </div>
+  </Container>
+</nav>
+
+<style>
+  .service-nav__scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .service-nav__scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .service-nav__link[data-active='true'] {
+    border-color: rgb(6 182 212 / 0.45);
+    background: rgb(6 182 212 / 0.1);
+    color: var(--color-foreground);
+  }
+</style>

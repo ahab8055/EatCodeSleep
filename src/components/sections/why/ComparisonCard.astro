@@ -1,0 +1,56 @@
+---
+import { Check, X } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { ComparisonColumn } from '@/types/why';
+
+export interface Props {
+  column: ComparisonColumn;
+  class?: string;
+}
+
+const { column, class: className }: Props = Astro.props;
+const isPositive = column.tone === 'positive';
+---
+
+<article
+  class={cn(
+    'h-full rounded-[var(--radius-ds)] border p-6 backdrop-blur-xl sm:p-7 md:p-8',
+    isPositive
+      ? 'border-accent/25 bg-accent/[0.06] shadow-[0_0_40px_rgb(34_197_94_/0.08)]'
+      : 'border-border bg-background-card/50',
+    className,
+  )}
+  data-comparison-card={column.tone}
+>
+  <h3
+    class={cn(
+      'font-display text-xl tracking-tight',
+      isPositive ? 'text-foreground' : 'text-muted',
+    )}
+  >
+    {column.title}
+  </h3>
+
+  <ul class="mt-6 space-y-3" role="list">
+    {
+      column.items.map((item) => (
+        <li class="flex items-start gap-3 text-sm">
+          <span
+            class={cn(
+              'mt-0.5 inline-flex size-5 shrink-0 items-center justify-center rounded-full',
+              isPositive ? 'bg-accent/15 text-accent' : 'bg-white/5 text-muted',
+            )}
+            aria-hidden="true"
+          >
+            {isPositive ? (
+              <Check class="size-3" stroke-width={2.5} />
+            ) : (
+              <X class="size-3" stroke-width={2.5} />
+            )}
+          </span>
+          <span class={isPositive ? 'text-foreground' : 'text-muted'}>{item.label}</span>
+        </li>
+      ))
+    }
+  </ul>
+</article>

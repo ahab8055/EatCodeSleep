@@ -1,0 +1,30 @@
+---
+import { cn } from '@/lib/cn';
+import type { BadgeVariant } from '@/types/components';
+
+export interface Props {
+  variant?: BadgeVariant;
+  class?: string;
+  as?: 'span' | 'div' | 'p';
+}
+
+const { variant = 'default', class: className, as: Tag = 'span' }: Props = Astro.props;
+
+const variantClasses: Record<BadgeVariant, string> = {
+  default: 'bg-white/5 text-muted border-border',
+  primary: 'bg-primary/15 text-primary border-primary/20',
+  secondary: 'bg-secondary/15 text-secondary border-secondary/20',
+  accent: 'bg-accent/15 text-accent border-accent/20',
+  outline: 'bg-transparent text-muted border-border',
+};
+---
+
+<Tag
+  class={cn(
+    'inline-flex items-center gap-2 rounded-full border px-3 py-1 text-label',
+    variantClasses[variant],
+    className,
+  )}
+>
+  <slot />
+</Tag>

@@ -1,0 +1,103 @@
+---
+/**
+ * Project Builder preview — mirrors the contact onboarding journey.
+ */
+const steps = [
+  { label: 'What are you building?', hint: 'Choose a product type' },
+  { label: 'Project stage', hint: 'Idea → production' },
+  { label: 'Budget range', hint: 'Align scope early' },
+  { label: 'Project details', hint: 'Tell us the goal' },
+] as const;
+---
+
+<div
+  class="relative mx-auto w-full max-w-md"
+  data-contact-hero-visual
+  data-contact-float
+  aria-hidden="true"
+>
+  <div
+    class="absolute left-1/2 top-1/2 size-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-[90px]"
+    data-contact-glow
+  >
+  </div>
+
+  <div
+    class="relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/60 p-5 backdrop-blur-xl sm:p-6"
+  >
+    <div class="mb-5 flex items-center justify-between gap-3">
+      <p class="text-label text-secondary">Project Builder</p>
+      <span class="rounded-full border border-border bg-white/[0.04] px-2.5 py-1 text-[10px] text-muted">
+        Onboarding
+      </span>
+    </div>
+
+    <div class="mb-5 h-1.5 overflow-hidden rounded-full bg-white/10">
+      <div class="contact-builder__progress h-full w-[62%] rounded-full bg-gradient-to-r from-primary via-secondary to-accent">
+      </div>
+    </div>
+
+    <ol class="space-y-2.5">
+      {
+        steps.map((step, index) => (
+          <li
+            class:list={[
+              'contact-builder__step flex items-start gap-3 rounded-xl border px-3 py-2.5 transition-colors',
+              index === 1
+                ? 'border-secondary/40 bg-secondary/10'
+                : 'border-border bg-white/[0.03]',
+            ]}
+            style={`--d: ${index * 0.12}s`}
+          >
+            <span
+              class:list={[
+                'mt-0.5 flex size-7 shrink-0 items-center justify-center rounded-full border text-[10px]',
+                index < 1 && 'border-accent/40 bg-accent/15 text-accent',
+                index === 1 && 'border-secondary/50 bg-secondary/20 text-secondary',
+                index > 1 && 'border-border text-muted',
+              ]}
+            >
+              {index < 1 ? '✓' : String(index + 1).padStart(2, '0')}
+            </span>
+            <div class="min-w-0">
+              <p class="truncate text-sm text-foreground">{step.label}</p>
+              <p class="truncate text-[11px] text-muted">{step.hint}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</div>
+
+<style>
+  .contact-builder__progress {
+    transform-origin: left center;
+    animation: builder-fill 2.4s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  .contact-builder__step {
+    animation: builder-rise 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: var(--d, 0s);
+  }
+
+  @keyframes builder-fill {
+    from {
+      transform: scaleX(0.12);
+    }
+  }
+
+  @keyframes builder-rise {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .contact-builder__progress,
+    .contact-builder__step {
+      animation: none;
+    }
+  }
+</style>

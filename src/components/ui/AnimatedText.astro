@@ -1,0 +1,85 @@
+---
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'div';
+  class?: string;
+  split?: 'words' | 'lines' | 'none';
+  animateOnScroll?: boolean;
+}
+
+const {
+  as: Tag = 'span',
+  class: className,
+  split = 'words',
+  animateOnScroll = true,
+}: Props = Astro.props;
+---
+
+<Tag
+  class={cn('animated-text inline-block', className)}
+  data-animated-text
+  data-split={split}
+  data-animate-on-scroll={animateOnScroll ? 'true' : 'false'}
+>
+  <slot />
+</Tag>
+
+<script>
+  import { animateTextReveal, revealOnScroll } from '@/lib/animations';
+  import { getPrefersReducedMotion } from '@/hooks/useReducedMotion';
+
+  function prepareWords(element: HTMLElement): HTMLElement[] {
+    const text = element.textContent?.trim() ?? '';
+    if (!text) return [];
+
+    element.setAttribute('aria-label', text);
+    element.textContent = '';
+
+    return text.split(/\s+/).map((word) => {
+      const wordEl = document.createElement('span');
+      wordEl.className = 'inline-block will-change-transform gpu opacity-0 translate-y-4';
+      wordEl.textContent = word;
+      wordEl.setAttribute('aria-hidden', 'true');
+      element.appendChild(wordEl);
+
+      const space = document.createTextNode(' ');
+      element.appendChild(space);
+
+      return wordEl;
+    });
+  }
+
+  function initAnimatedText(): void {
+    if (getPrefersReducedMotion()) {
+      document.querySelectorAll<HTMLElement>('[data-animated-text]').forEach((el) => {
+        el.classList.remove('opacity-0');
+      });
+      return;
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-animated-text]').forEach((element) => {
+      const splitMode = element.dataset.split ?? 'words';
+      const onScroll = element.dataset.animateOnScroll === 'true';
+
+      if (splitMode === 'words') {
+        const words = prepareWords(element);
+        if (onScroll) {
+          revealOnScroll(words);
+        } else {
+          animateTextReveal(words);
+        }
+        return;
+      }
+
+      if (onScroll) {
+        revealOnScroll(element);
+      } else {
+        animateTextReveal([element]);
+      }
+    });
+  }
+
+  initAnimatedText();
+  document.addEventListener('astro:page-load', initAnimatedText);
+</script>

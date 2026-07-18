@@ -1,0 +1,21 @@
+---
+/**
+ * Work-page project visual — CSS product scenes, no stock imagery.
+ */
+import ProjectSceneSet from '@/components/visuals/ProjectSceneSet.astro';
+import type { ProjectVisualVariant } from '@/types/projects';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  variant: ProjectVisualVariant;
+  alt: string;
+  mode?: 'compact' | 'gallery';
+  class?: string;
+}
+
+const { variant, alt, mode = 'compact', class: className }: Props = Astro.props;
+---
+
+<div class={cn('overflow-hidden rounded-[calc(var(--radius-ds)-4px)]', className)}>
+  <ProjectSceneSet variant={variant} alt={alt} mode={mode} />
+</div>

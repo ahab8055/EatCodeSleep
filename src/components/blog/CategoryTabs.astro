@@ -1,0 +1,52 @@
+---
+import { blogFilters } from '@/data/blog';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn('category-tabs', className)}
+  data-category-tabs
+  role="group"
+  aria-label="Filter articles by category"
+>
+  <div
+    class="category-tabs__scroller -mx-4 flex gap-2 overflow-x-auto px-4 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+  >
+    {
+      blogFilters.map((filter) => (
+        <button
+          type="button"
+          class="category-tabs__btn inline-flex shrink-0 items-center rounded-lg border border-transparent px-3.5 py-2 text-sm leading-none text-muted transition-[color,background-color,border-color] duration-200 hover:border-border hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+          data-blog-filter={filter.id}
+          data-active={filter.id === 'all' ? 'true' : 'false'}
+          aria-pressed={filter.id === 'all' ? 'true' : 'false'}
+        >
+          {filter.label}
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<style>
+  .category-tabs__scroller {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .category-tabs__scroller::-webkit-scrollbar {
+    display: none;
+  }
+
+  .category-tabs__btn[data-active='true'] {
+    border-color: rgb(6 182 212 / 0.45);
+    background: rgb(6 182 212 / 0.1);
+    color: var(--color-foreground);
+  }
+</style>

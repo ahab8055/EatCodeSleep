@@ -1,0 +1,51 @@
+---
+import { cn } from '@/lib/cn';
+import type { HeadingLevel, HeadingSize } from '@/types/components';
+
+export interface Props {
+  as?: HeadingLevel;
+  size?: HeadingSize;
+  class?: string;
+  id?: string;
+  balance?: boolean;
+}
+
+const { as: level = 2, size, class: className, id, balance = true }: Props = Astro.props;
+
+const sizeFromLevel: Record<HeadingLevel, HeadingSize> = {
+  1: 'display',
+  2: 'xl',
+  3: 'lg',
+  4: 'md',
+  5: 'sm',
+  6: 'xs',
+};
+
+const tagByLevel: Record<HeadingLevel, 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'> = {
+  1: 'h1',
+  2: 'h2',
+  3: 'h3',
+  4: 'h4',
+  5: 'h5',
+  6: 'h6',
+};
+
+const resolvedSize: HeadingSize = size ?? sizeFromLevel[level];
+const Tag = tagByLevel[level];
+
+const sizeClasses: Record<HeadingSize, string> = {
+  display: 'text-display',
+  xl: 'text-h1',
+  lg: 'text-h2',
+  md: 'text-h3',
+  sm: 'text-h4',
+  xs: 'text-h5',
+};
+---
+
+<Tag
+  id={id}
+  class={cn(sizeClasses[resolvedSize], balance && 'text-balance', 'text-foreground', className)}
+>
+  <slot />
+</Tag>

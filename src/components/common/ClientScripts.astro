@@ -1,0 +1,106 @@
+---
+/**
+ * Smooth scroll + shared client animation bootstrap.
+ * Heavy modules are dynamically imported after idle / first interaction
+ * so they stay off the critical rendering path.
+ */
+---
+
+<script>
+  import { whenIdle } from '@/lib/whenIdle';
+  import { getPrefersReducedMotion, onReducedMotionChange } from '@/hooks/useReducedMotion';
+
+  let disposeMotion: (() => void) | undefined;
+  let disposeCursor: (() => void) | undefined;
+  let disposeWipe: (() => void) | undefined;
+  let cancelSchedule: (() => void) | undefined;
+  let booted = false;
+  let booting: Promise<void> | null = null;
+
+  function teardownFx(): void {
+    disposeMotion?.();
+    disposeCursor?.();
+    disposeMotion = undefined;
+    disposeCursor = undefined;
+  }
+
+  async function boot(): Promise<void> {
+    if (booting) return booting;
+
+    booting = (async () => {
+      const [
+        { initLenis, destroyLenis },
+        { registerGsapPlugins, ScrollTrigger },
+        { initAnchorSmoothScroll },
+        { initMotionSystem },
+        { initCustomCursor },
+        { initPageTransitions },
+      ] = await Promise.all([
+        import('@/lib/lenis'),
+        import('@/lib/gsap'),
+        import('@/lib/smooth-scroll'),
+        import('@/animations/init'),
+        import('@/animations/cursor'),
+        import('@/animations/pageTransition'),
+      ]);
+
+      destroyLenis();
+      teardownFx();
+
+      disposeWipe ??= initPageTransitions();
+
+      if (getPrefersReducedMotion()) {
+        initAnchorSmoothScroll();
+        booted = true;
+        return;
+      }
+
+      registerGsapPlugins();
+      const lenis = initLenis();
+
+      if (lenis) {
+        lenis.on('scroll', ScrollTrigger.update);
+      }
+
+      initAnchorSmoothScroll();
+      disposeMotion = initMotionSystem(document);
+      disposeCursor = initCustomCursor(document);
+      booted = true;
+    })().finally(() => {
+      booting = null;
+    });
+
+    return booting;
+  }
+
+  function scheduleBoot(timeout = 2200): void {
+    cancelSchedule?.();
+    cancelSchedule = whenIdle(() => {
+      void boot();
+    }, timeout);
+  }
+
+  scheduleBoot();
+
+  document.addEventListener('astro:page-load', () => {
+    if (booted || booting) {
+      void boot();
+      return;
+    }
+    scheduleBoot(1400);
+  });
+
+  document.addEventListener('astro:before-preparation', () => {
+    void import('@/lib/lenis').then(({ destroyLenis }) => destroyLenis());
+    teardownFx();
+  });
+
+  onReducedMotionChange((reduced) => {
+    if (reduced) {
+      void import('@/lib/lenis').then(({ destroyLenis }) => destroyLenis());
+      teardownFx();
+      return;
+    }
+    void boot();
+  });
+</script>

@@ -1,0 +1,179 @@
+---
+/**
+ * Engineering workspace scene: terminal, editor, architecture, AI chat, deploy logs.
+ */
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  class?: string;
+}
+
+const { class: className }: Props = Astro.props;
+---
+
+<div
+  class={cn('workspace-scene relative mx-auto w-full max-w-lg', className)}
+  role="img"
+  aria-label="Engineering workspace with terminal, editor, architecture diagram, AI chat, and deployment logs"
+>
+  <div
+    class="absolute left-1/2 top-1/2 size-[70%] -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/18 blur-[90px]"
+    data-about-glow
+  >
+  </div>
+
+  <div class="relative grid grid-cols-2 gap-2.5 sm:gap-3">
+    {/* Terminal */}
+    <div
+      class="workspace-scene__panel col-span-2 overflow-hidden rounded-[var(--radius-ds)] border border-border bg-[#070b18]/95 shadow-[0_20px_50px_rgb(0_0_0_/0.45)] backdrop-blur-xl sm:col-span-1"
+      data-workspace-panel="terminal"
+    >
+      <div class="flex items-center gap-1.5 border-b border-border px-3 py-2">
+        <span class="size-2 rounded-full bg-red-400/80"></span>
+        <span class="size-2 rounded-full bg-amber-300/80"></span>
+        <span class="size-2 rounded-full bg-accent/80"></span>
+        <span class="ml-2 font-mono text-[10px] text-muted">zsh — ecs</span>
+      </div>
+      <pre class="space-y-1 p-3 font-mono text-[10px] leading-5 text-muted sm:text-[11px]">
+        <code class="block text-secondary/90">$ pnpm build</code>
+        <code class="block workspace-scene__line">✓ compiled in 1.8s</code>
+        <code class="block workspace-scene__line" style="--d: 0.4s">✓ optimized assets</code>
+        <code class="block workspace-scene__cursor text-accent">▌</code>
+      </pre>
+    </div>
+
+    {/* VS Code-ish */}
+    <div
+      class="workspace-scene__panel overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/80 shadow-[0_18px_44px_rgb(0_0_0_/0.4)] backdrop-blur-xl"
+      data-workspace-panel="editor"
+    >
+      <div class="border-b border-border px-3 py-2">
+        <p class="text-[10px] text-muted">agent.route.ts</p>
+      </div>
+      <pre class="p-3 font-mono text-[10px] leading-5 sm:text-[11px]">
+        <code class="block"><span class="text-secondary">export</span> <span class="text-foreground">async</span> <span class="text-secondary">function</span> <span class="text-primary">route</span>() {'{'}</code>
+        <code class="block text-muted">  await plan();</code>
+        <code class="block text-muted">  return ship();</code>
+        <code class="block text-foreground">{'}'}</code>
+      </pre>
+    </div>
+
+    {/* Architecture */}
+    <div
+      class="workspace-scene__panel rounded-[var(--radius-ds)] border border-border bg-background-secondary/80 p-3 shadow-[0_18px_44px_rgb(0_0_0_/0.4)] backdrop-blur-xl"
+      data-workspace-panel="architecture"
+    >
+      <p class="text-label mb-2 text-secondary">Architecture</p>
+      <div class="flex flex-col items-center gap-1.5 text-[10px] text-muted">
+        <span class="rounded-full border border-border bg-white/5 px-2 py-0.5 text-foreground">API</span>
+        <span class="h-3 w-px bg-gradient-to-b from-primary to-secondary"></span>
+        <div class="flex gap-2">
+          <span class="rounded-full border border-border bg-white/5 px-2 py-0.5">Services</span>
+          <span class="rounded-full border border-border bg-white/5 px-2 py-0.5">Data</span>
+        </div>
+      </div>
+    </div>
+
+    {/* AI Chat */}
+    <div
+      class="workspace-scene__panel rounded-[var(--radius-ds)] border border-border bg-background-card/80 p-3 shadow-[0_18px_44px_rgb(0_0_0_/0.4)] backdrop-blur-xl"
+      data-workspace-panel="ai"
+    >
+      <p class="text-label mb-2 text-secondary">AI Chat</p>
+      <div class="space-y-1.5">
+        <div class="rounded-lg border border-border bg-white/[0.03] px-2 py-1.5 text-[10px] text-muted">
+          Draft the deploy checklist…
+        </div>
+        <div class="rounded-lg border border-primary/25 bg-primary/10 px-2 py-1.5 text-[10px] text-foreground">
+          Ready. Validating env + health checks.
+        </div>
+      </div>
+    </div>
+
+    {/* Deploy logs */}
+    <div
+      class="workspace-scene__panel col-span-2 overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-secondary/85 p-3 shadow-[0_18px_44px_rgb(0_0_0_/0.4)] backdrop-blur-xl"
+      data-workspace-panel="deploy"
+    >
+      <div class="mb-2 flex items-center justify-between gap-2">
+        <p class="text-label text-secondary">Deployment</p>
+        <span class="inline-flex items-center gap-1.5 rounded-full bg-accent/15 px-2 py-0.5 text-[10px] text-accent">
+          <span class="workspace-scene__pulse size-1.5 rounded-full bg-accent"></span>
+          live
+        </span>
+      </div>
+      <ul class="space-y-1 font-mono text-[10px] text-muted sm:text-[11px]">
+        <li class="workspace-scene__log" style="--d: 0s">→ building image…</li>
+        <li class="workspace-scene__log" style="--d: 0.5s">→ pushing to registry…</li>
+        <li class="workspace-scene__log text-accent" style="--d: 1s">✓ production healthy</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<style>
+  .workspace-scene__line {
+    opacity: 0;
+    animation: ws-fade 0.5s ease forwards;
+    animation-delay: var(--d, 0.15s);
+  }
+
+  .workspace-scene__cursor {
+    animation: ws-blink 1s step-end infinite;
+  }
+
+  .workspace-scene__pulse {
+    animation: ws-pulse 1.6s ease-in-out infinite;
+  }
+
+  .workspace-scene__log {
+    opacity: 0.35;
+    animation: ws-log 3.2s ease-in-out infinite;
+    animation-delay: var(--d, 0s);
+  }
+
+  @keyframes ws-fade {
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes ws-blink {
+    50% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes ws-pulse {
+    0%,
+    100% {
+      opacity: 0.45;
+      transform: scale(0.9);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.15);
+    }
+  }
+
+  @keyframes ws-log {
+    0%,
+    100% {
+      opacity: 0.35;
+    }
+    40%,
+    60% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .workspace-scene__line,
+    .workspace-scene__cursor,
+    .workspace-scene__pulse,
+    .workspace-scene__log {
+      animation: none;
+      opacity: 1;
+    }
+  }
+</style>

@@ -1,0 +1,54 @@
+---
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  variant?: 'ai' | 'architecture' | 'automation' | 'engineering' | 'cloud' | 'frontend' | 'product';
+  title?: string;
+  class?: string;
+}
+
+const { variant = 'engineering', title = 'Insight', class: className }: Props = Astro.props;
+
+const labels: Record<NonNullable<Props['variant']>, string[]> = {
+  ai: ['Agent', 'Retrieve', 'Decide', 'Act'],
+  architecture: ['API', 'Service', 'Queue', 'Store'],
+  automation: ['Trigger', 'Transform', 'Review', 'Notify'],
+  engineering: ['Design', 'Build', 'Test', 'Ship'],
+  cloud: ['Build', 'Deploy', 'Scale', 'Observe'],
+  frontend: ['Render', 'Cache', 'Hydrate', 'Measure'],
+  product: ['Discover', 'Shape', 'Validate', 'Iterate'],
+};
+---
+
+<div
+  class={cn(
+    'article-cover relative aspect-[16/10] overflow-hidden rounded-[calc(var(--radius-ds)-4px)] border border-border bg-background-secondary',
+    className,
+  )}
+  aria-hidden="true"
+  data-article-cover={variant}
+>
+  <div class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/25 via-transparent to-secondary/15"></div>
+  <div class="absolute -right-8 -top-8 size-36 rounded-full bg-primary/25 blur-[60px]" data-blog-glow></div>
+
+  <div class="relative z-10 flex h-full flex-col p-4 sm:p-5">
+    <div class="mb-3 flex items-center justify-between gap-3">
+      <div class="flex items-center gap-1.5">
+        <span class="size-2 rounded-full bg-accent/80"></span>
+        <span class="size-2 rounded-full bg-secondary/70"></span>
+        <span class="size-2 rounded-full bg-primary/70"></span>
+      </div>
+      <span class="text-label text-secondary">{title}</span>
+    </div>
+
+    <div class="grid flex-1 grid-cols-2 gap-2 sm:gap-3">
+      {
+        labels[variant].map((label) => (
+          <div class="flex items-center justify-center rounded-xl border border-border bg-white/[0.04] px-2 text-center text-xs text-muted">
+            {label}
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</div>

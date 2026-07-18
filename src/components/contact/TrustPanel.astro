@@ -1,0 +1,43 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ContactBackground from '@/components/contact/ContactBackground.astro';
+import { contactTrustItems } from '@/data/contact';
+---
+
+<Section
+  id="trust"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="trust-heading"
+  data-contact-trust
+>
+  <ContactBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Why Clients Trust Us"
+      heading={['Working with EatCodeSleep', 'means:']}
+      headingId="trust-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:gap-6"
+      data-trust-grid
+      role="list"
+    >
+      {
+        contactTrustItems.map((item) => (
+          <li class="min-w-0" data-trust-card>
+            <article class="h-full rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-6 backdrop-blur-xl sm:p-7">
+              <h3 class="font-display text-xl tracking-tight text-foreground">{item.title}</h3>
+              <p class="text-body mt-3 text-pretty">{item.description}</p>
+            </article>
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

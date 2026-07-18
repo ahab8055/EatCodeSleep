@@ -1,0 +1,92 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import AboutBackground from '@/components/about/AboutBackground.astro';
+import { aboutTimeline } from '@/data/about';
+---
+
+<Section
+  id="timeline"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="timeline-heading"
+  data-about-timeline
+>
+  <AboutBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Our Journey"
+      heading={['A clear path from', 'foundation to today.']}
+      description="We grow by deepening craft, expanding capability, and shipping work that compounds over time."
+      headingId="timeline-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ol class="about-timeline relative" data-timeline-list>
+      {
+        aboutTimeline.map((item, index) => (
+          <li class="about-timeline__item" data-timeline-item>
+            <div class="about-timeline__card rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 backdrop-blur-xl sm:p-6">
+              <p class="font-display text-sm text-secondary">{item.number}</p>
+              <h3 class="mt-2 font-display text-xl tracking-tight text-foreground">
+                {item.title}
+              </h3>
+              <p class="text-body mt-3 text-pretty">{item.description}</p>
+            </div>
+
+            {index < aboutTimeline.length - 1 && (
+              <span class="about-timeline__connector" aria-hidden="true">
+                ↓
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+</Section>
+
+<style>
+  .about-timeline {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .about-timeline__connector {
+    display: flex;
+    justify-content: center;
+    padding-block: 0.25rem;
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+  }
+
+  @media (min-width: 768px) {
+    .about-timeline {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 1.25rem;
+      align-items: stretch;
+    }
+
+    .about-timeline__item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .about-timeline__card {
+      flex: 1;
+    }
+
+    .about-timeline__connector {
+      position: absolute;
+      top: 50%;
+      right: -0.85rem;
+      z-index: 1;
+      display: block;
+      padding: 0;
+      transform: translateY(-50%) rotate(-90deg);
+    }
+  }
+</style>

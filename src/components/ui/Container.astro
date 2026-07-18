@@ -1,0 +1,15 @@
+---
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  as?: 'div' | 'section' | 'main' | 'article' | 'header' | 'footer' | 'nav';
+  class?: string;
+  narrow?: boolean;
+}
+
+const { as: Tag = 'div', class: className, narrow = false }: Props = Astro.props;
+---
+
+<Tag class={cn('container-ds', narrow && 'max-w-4xl', className)}>
+  <slot />
+</Tag>

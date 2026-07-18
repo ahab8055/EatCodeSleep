@@ -1,0 +1,114 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import TestimonialsBackground from '@/components/sections/testimonials/TestimonialsBackground.astro';
+import MetricCard from '@/components/sections/testimonials/MetricCard.astro';
+import ClientLogoMarquee from '@/components/sections/testimonials/ClientLogoMarquee.astro';
+import TestimonialCard from '@/components/sections/testimonials/TestimonialCard.astro';
+import SuccessStoryCard from '@/components/sections/testimonials/SuccessStoryCard.astro';
+import RecognitionPanel from '@/components/sections/testimonials/RecognitionPanel.astro';
+import {
+  successStories,
+  testimonials,
+  testimonialsSection,
+  trustMetrics,
+} from '@/data/testimonials';
+---
+
+<Section
+  id="testimonials"
+  spacing="xl"
+  class="content-auto scroll-mt-20 overflow-hidden"
+  ariaLabelledby="testimonials-heading"
+>
+  <TestimonialsBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={testimonialsSection.label}
+      heading={testimonialsSection.headingLines}
+      description={testimonialsSection.description}
+      headingId="testimonials-heading"
+      size="lg"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-4 lg:gap-6"
+      data-trust-metrics
+      role="list"
+      aria-label="Client trust metrics"
+    >
+      {
+        trustMetrics.map((metric) => (
+          <li class="min-w-0">
+            <MetricCard metric={metric} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <ClientLogoMarquee class="mt-12 md:mt-16" />
+
+    <ul
+      class="mt-12 grid grid-cols-1 gap-4 sm:mt-16 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3 lg:gap-6"
+      data-testimonials-grid
+      role="list"
+      aria-label="Client testimonials"
+    >
+      {
+        testimonials.map((testimonial) => (
+          <li class="min-w-0">
+            <TestimonialCard testimonial={testimonial} />
+          </li>
+        ))
+      }
+    </ul>
+
+    <div
+      class="mt-12 grid grid-cols-1 gap-4 sm:gap-5 md:mt-16 md:grid-cols-2 md:gap-6"
+      data-success-stories
+    >
+      {
+        successStories.map((story, index) => (
+          <SuccessStoryCard story={story} index={index} />
+        ))
+      }
+    </div>
+
+    <RecognitionPanel class="mt-12 md:mt-16 lg:mt-20" />
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#testimonials', async (root) => {
+      const {
+        playTestimonialsHeader,
+        playTrustMetrics,
+        playClientLogoMarquee,
+        playTestimonialCards,
+        playSuccessStories,
+        playRecognitionPanel,
+        startTestimonialsAmbient,
+      } = await import('@/lib/testimonials-animations');
+
+      playTestimonialsHeader(root);
+      playTrustMetrics(root);
+      playClientLogoMarquee(root);
+      playTestimonialCards(root);
+      playSuccessStories(root);
+      playRecognitionPanel(root);
+      startTestimonialsAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

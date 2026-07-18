@@ -1,0 +1,51 @@
+---
+import { whyChooseSection } from '@/data/why';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  quote?: string;
+  class?: string;
+}
+
+const { quote = whyChooseSection.quote, class: className }: Props = Astro.props;
+---
+
+<figure
+  class={cn('relative mx-auto max-w-4xl', className)}
+  data-quote-panel
+>
+  <blockquote
+    class="quote-panel relative overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 px-6 py-10 text-center backdrop-blur-xl sm:px-10 sm:py-12 md:px-16 md:py-14"
+  >
+    <div
+      class="pointer-events-none absolute inset-0 bg-gradient-to-br from-primary/12 via-transparent to-secondary/10"
+      aria-hidden="true"
+    >
+    </div>
+    <div
+      class="pointer-events-none absolute left-1/2 top-0 size-72 -translate-x-1/2 -translate-y-1/2 rounded-full bg-primary/20 blur-[90px]"
+      aria-hidden="true"
+    >
+    </div>
+
+    <div class="relative z-10">
+      <span
+        class="font-display block text-5xl leading-none text-secondary/40 md:text-6xl"
+        aria-hidden="true"
+      >
+        “
+      </span>
+      <p class="font-display mx-auto mt-2 max-w-3xl text-balance text-xl tracking-tight text-foreground sm:text-2xl md:text-3xl md:leading-snug">
+        {quote}
+      </p>
+    </div>
+  </blockquote>
+</figure>
+
+<style>
+  .quote-panel {
+    box-shadow:
+      0 24px 80px rgb(0 0 0 / 0.28),
+      0 0 60px rgb(79 70 229 / 0.1);
+  }
+</style>

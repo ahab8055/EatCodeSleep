@@ -1,0 +1,415 @@
+---
+import { ArrowRight, Check } from '@lucide/astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ContactBackground from '@/components/contact/ContactBackground.astro';
+import FormStep from '@/components/contact/FormStep.astro';
+import {
+  budgetOptions,
+  buildTypeOptions,
+  contactFormCopy,
+  projectStageOptions,
+} from '@/data/contact';
+
+const steps = [
+  { id: 1, label: 'Build' },
+  { id: 2, label: 'Stage' },
+  { id: 3, label: 'Budget' },
+  { id: 4, label: 'Details' },
+] as const;
+
+const fieldClass =
+  'w-full rounded-[var(--radius-ds)] border border-border bg-white/5 px-4 py-3 text-sm text-foreground placeholder:text-muted transition-colors duration-200 focus:border-secondary/50 focus:outline-none focus:ring-2 focus:ring-secondary/40';
+---
+
+<Section
+  id="project-form"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="project-form-heading"
+  data-project-form-section
+>
+  <ContactBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Project Inquiry"
+      heading={[contactFormCopy.title]}
+      description={contactFormCopy.description}
+      headingId="project-form-heading"
+      class="mb-10 md:mb-12"
+    />
+
+    <div
+      class="mx-auto max-w-3xl rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 shadow-[0_24px_80px_rgb(0_0_0_/0.28)] backdrop-blur-xl sm:p-8"
+      data-project-form-shell
+      data-step="1"
+    >
+      <nav class="form-stepper mb-8 sm:mb-10" aria-label="Project builder progress" data-form-stepper>
+        <ol class="form-stepper__list">
+          {
+            steps.map((item, index) => (
+              <li
+                class="form-stepper__item"
+                data-step-indicator={item.id}
+                data-state={item.id === 1 ? 'current' : 'upcoming'}
+                aria-current={item.id === 1 ? 'step' : 'false'}
+              >
+                <div class="form-stepper__node">
+                  <div class="form-stepper__marker">
+                    <span class="form-stepper__index">{item.id}</span>
+                    <span class="form-stepper__check" aria-hidden="true">
+                      <Check class="size-3.5" stroke-width={2.5} />
+                    </span>
+                  </div>
+                  <span class="form-stepper__label">{item.label}</span>
+                </div>
+                {index < steps.length - 1 && (
+                  <span class="form-stepper__track" aria-hidden="true">
+                    <span class="form-stepper__track-fill" />
+                  </span>
+                )}
+              </li>
+            ))
+          }
+        </ol>
+        <p class="mt-4 text-xs text-muted" data-form-step-meta>
+          Step 1 of 4
+        </p>
+      </nav>
+
+      <div data-form-success hidden>
+        <div class="flex flex-col items-center py-10 text-center">
+          <span class="mb-4 inline-flex size-12 items-center justify-center rounded-full bg-accent/15 text-accent">
+            <Check class="size-6" aria-hidden="true" />
+          </span>
+          <h3 class="font-display text-2xl tracking-tight text-foreground">
+            {contactFormCopy.successTitle}
+          </h3>
+          <p class="text-body mt-3 max-w-md text-pretty">
+            {contactFormCopy.successDescription}
+          </p>
+        </div>
+      </div>
+
+      <form class="space-y-6" data-project-form novalidate>
+        <input type="hidden" name="source" value="contact-page" />
+
+        <FormStep
+          step={1}
+          title="What are you looking to build?"
+          description="Select the closest match. We can refine this together."
+          fieldName="buildType"
+          options={buildTypeOptions}
+        />
+
+        <FormStep
+          step={2}
+          title="What stage is your project in?"
+          description="This helps us recommend the right delivery approach."
+          fieldName="projectStage"
+          options={projectStageOptions}
+        />
+
+        <FormStep
+          step={3}
+          title="What is your budget range?"
+          description="An estimate is enough. Consultation is always available."
+          fieldName="budget"
+          options={budgetOptions}
+        />
+
+        <FormStep
+          step={4}
+          title="Project details"
+          description="Share enough context for a useful first reply."
+        >
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <label class="mb-2 block text-sm text-muted" for="contact-name">Name</label>
+              <input
+                id="contact-name"
+                name="name"
+                type="text"
+                autocomplete="name"
+                required
+                class={fieldClass}
+                aria-describedby="contact-name-error"
+              />
+              <p id="contact-name-error" class="mt-2 text-sm text-red-400" data-field-error="name" hidden></p>
+            </div>
+
+            <div>
+              <label class="mb-2 block text-sm text-muted" for="contact-email">Email</label>
+              <input
+                id="contact-email"
+                name="email"
+                type="email"
+                autocomplete="email"
+                required
+                class={fieldClass}
+                aria-describedby="contact-email-error"
+              />
+              <p id="contact-email-error" class="mt-2 text-sm text-red-400" data-field-error="email" hidden></p>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="mb-2 block text-sm text-muted" for="contact-company">Company</label>
+              <input
+                id="contact-company"
+                name="company"
+                type="text"
+                autocomplete="organization"
+                class={fieldClass}
+              />
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="mb-2 block text-sm text-muted" for="contact-description">
+                Description
+              </label>
+              <textarea
+                id="contact-description"
+                name="description"
+                rows="5"
+                required
+                class={`${fieldClass} min-h-[8rem] resize-y`}
+                aria-describedby="contact-description-error"
+              ></textarea>
+              <p
+                id="contact-description-error"
+                class="mt-2 text-sm text-red-400"
+                data-field-error="description"
+                hidden
+              >
+              </p>
+            </div>
+
+            <div class="sm:col-span-2">
+              <label class="mb-2 block text-sm text-muted" for="contact-timeline">Timeline</label>
+              <input
+                id="contact-timeline"
+                name="timeline"
+                type="text"
+                placeholder="e.g. 8–12 weeks, ASAP, Q3 launch"
+                class={fieldClass}
+              />
+            </div>
+          </div>
+        </FormStep>
+
+        <p class="text-sm text-muted" data-form-status hidden role="status" aria-live="polite"></p>
+
+        <div class="flex flex-col-reverse gap-3 border-t border-border/60 pt-6 sm:flex-row sm:items-center sm:justify-between">
+          <button
+            type="button"
+            class="inline-flex items-center justify-center rounded-[var(--radius-ds)] border border-border bg-transparent px-5 py-3 text-sm font-medium text-muted transition-colors hover:border-white/15 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+            data-form-back
+            hidden
+          >
+            Back
+          </button>
+
+          <div class="flex w-full flex-col gap-3 sm:ml-auto sm:w-auto sm:flex-row">
+            <button
+              type="button"
+              class="inline-flex w-full items-center justify-center gap-2 rounded-[var(--radius-ds)] bg-primary px-5 py-3 text-sm font-medium text-foreground shadow-[var(--shadow-glow-primary)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-button-lift)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary sm:w-auto"
+              data-form-next
+            >
+              Continue
+              <ArrowRight class="size-4" aria-hidden="true" />
+            </button>
+
+            <button
+              type="submit"
+              class="submit-btn inline-flex w-full items-center justify-center gap-2 rounded-[var(--radius-ds)] bg-primary px-5 py-3 text-sm font-medium text-foreground shadow-[var(--shadow-glow-primary)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[var(--shadow-button-lift)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary disabled:pointer-events-none disabled:opacity-60 sm:w-auto"
+              data-form-submit
+              hidden
+            >
+              <span data-submit-label>{contactFormCopy.submitLabel}</span>
+              <ArrowRight class="size-4" data-submit-arrow aria-hidden="true" />
+              <span class="submit-btn__spinner" data-submit-spinner aria-hidden="true"></span>
+            </button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .form-stepper__list {
+    display: flex;
+    width: 100%;
+    align-items: flex-start;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .form-stepper__item {
+    display: flex;
+    min-width: 0;
+    flex: 1;
+    align-items: flex-start;
+  }
+
+  .form-stepper__item:last-child {
+    flex: 0 0 auto;
+  }
+
+  .form-stepper__node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+  }
+
+  .form-stepper__marker {
+    display: inline-flex;
+    width: 2rem;
+    height: 2rem;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 9999px;
+    background: rgb(17 24 39 / 0.95);
+    color: var(--color-muted);
+    transition:
+      border-color 0.25s ease,
+      background-color 0.25s ease,
+      color 0.25s ease,
+      box-shadow 0.25s ease;
+  }
+
+  .form-stepper__index {
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1;
+  }
+
+  .form-stepper__check {
+    display: none;
+  }
+
+  .form-stepper__label {
+    font-size: 0.75rem;
+    line-height: 1.2;
+    color: var(--color-muted);
+    white-space: nowrap;
+    transition: color 0.25s ease;
+  }
+
+  .form-stepper__track {
+    position: relative;
+    top: 1rem;
+    display: block;
+    height: 2px;
+    flex: 1;
+    margin-inline: 0.75rem;
+    overflow: hidden;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.08);
+  }
+
+  .form-stepper__track-fill {
+    display: block;
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, rgb(34 197 94 / 0.85), rgb(6 182 212 / 0.75));
+    transition: width 0.35s ease;
+  }
+
+  .form-stepper__item[data-state='complete'] .form-stepper__track-fill {
+    width: 100%;
+  }
+
+  .form-stepper__item[data-state='current'] .form-stepper__marker {
+    border-color: rgb(6 182 212 / 0.7);
+    background: rgb(6 182 212 / 0.12);
+    color: var(--color-secondary);
+    box-shadow: 0 0 0 4px rgb(6 182 212 / 0.12);
+  }
+
+  .form-stepper__item[data-state='current'] .form-stepper__label {
+    color: var(--color-foreground);
+    font-weight: 500;
+  }
+
+  .form-stepper__item[data-state='complete'] .form-stepper__marker {
+    border-color: rgb(34 197 94 / 0.55);
+    background: rgb(34 197 94 / 0.15);
+    color: var(--color-accent);
+  }
+
+  .form-stepper__item[data-state='complete'] .form-stepper__index {
+    display: none;
+  }
+
+  .form-stepper__item[data-state='complete'] .form-stepper__check {
+    display: inline-flex;
+  }
+
+  .form-stepper__item[data-state='complete'] .form-stepper__label {
+    color: var(--color-foreground);
+  }
+
+  .submit-btn[data-loading='true'] [data-submit-label],
+  .submit-btn[data-loading='true'] [data-submit-arrow] {
+    opacity: 0;
+  }
+
+  .submit-btn__spinner {
+    position: absolute;
+    display: none;
+    width: 1rem;
+    height: 1rem;
+    border: 2px solid rgb(255 255 255 / 0.25);
+    border-top-color: white;
+    border-radius: 9999px;
+    animation: contact-spin 0.7s linear infinite;
+  }
+
+  .submit-btn {
+    position: relative;
+  }
+
+  .submit-btn[data-loading='true'] .submit-btn__spinner {
+    display: block;
+  }
+
+  @keyframes contact-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  @media (max-width: 639px) {
+    .form-stepper__marker {
+      width: 1.75rem;
+      height: 1.75rem;
+    }
+
+    .form-stepper__track {
+      top: 0.875rem;
+      margin-inline: 0.5rem;
+    }
+
+    .form-stepper__label {
+      font-size: 0.6875rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .form-stepper__marker,
+    .form-stepper__label,
+    .form-stepper__track-fill,
+    .submit-btn__spinner {
+      transition: none;
+      animation: none;
+    }
+  }
+</style>

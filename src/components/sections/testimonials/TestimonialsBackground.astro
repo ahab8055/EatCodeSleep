@@ -1,0 +1,79 @@
+---
+/**
+ * Soft atmosphere for Testimonials / trust section.
+ */
+---
+
+<div class="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+  <div class="trust-bg-base absolute inset-0"></div>
+  <div class="trust-bg-grid absolute inset-0 opacity-[0.15]"></div>
+  <div class="trust-bg-noise absolute inset-0 opacity-[0.25] mix-blend-overlay"></div>
+
+  <div
+    class="absolute right-[-10%] top-[12%] size-[28rem] rounded-full bg-primary/12 blur-[120px] gpu md:size-[36rem]"
+    data-trust-glow
+  >
+  </div>
+  <div
+    class="absolute bottom-[8%] left-[-8%] size-[22rem] rounded-full bg-secondary/10 blur-[100px] gpu"
+    data-trust-glow
+  >
+  </div>
+
+  <span class="trust-particle trust-particle-1" data-trust-particle></span>
+  <span class="trust-particle trust-particle-2" data-trust-particle></span>
+  <span class="trust-particle trust-particle-3" data-trust-particle></span>
+  <span class="trust-particle trust-particle-4" data-trust-particle></span>
+</div>
+
+<style>
+  .trust-bg-base {
+    background:
+      radial-gradient(ellipse 55% 40% at 80% 15%, rgb(79 70 229 / 0.12), transparent 55%),
+      radial-gradient(ellipse 45% 35% at 15% 80%, rgb(6 182 212 / 0.08), transparent 50%),
+      linear-gradient(180deg, #050816 0%, #0b1023 48%, #050816 100%);
+  }
+
+  .trust-bg-grid {
+    background-image:
+      linear-gradient(rgb(255 255 255 / 0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(255 255 255 / 0.03) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: radial-gradient(ellipse 70% 60% at 50% 40%, black 15%, transparent 75%);
+  }
+
+  .trust-bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+  }
+
+  .trust-particle {
+    position: absolute;
+    width: 3px;
+    height: 3px;
+    border-radius: 9999px;
+    background: rgb(255 255 255 / 0.35);
+    transform: translateZ(0);
+  }
+
+  .trust-particle-1 {
+    left: 16%;
+    top: 24%;
+    opacity: 0.26;
+  }
+  .trust-particle-2 {
+    left: 38%;
+    top: 66%;
+    opacity: 0.2;
+  }
+  .trust-particle-3 {
+    left: 62%;
+    top: 20%;
+    opacity: 0.24;
+  }
+  .trust-particle-4 {
+    left: 86%;
+    top: 72%;
+    opacity: 0.18;
+  }
+</style>

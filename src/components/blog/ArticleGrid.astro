@@ -1,0 +1,51 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ArticleCard from '@/components/blog/ArticleCard.astro';
+import CategoryTabs from '@/components/blog/CategoryTabs.astro';
+import BlogBackground from '@/components/blog/BlogBackground.astro';
+import type { BlogPost } from '@/data/blog';
+
+export interface Props {
+  posts: BlogPost[];
+}
+
+const { posts }: Props = Astro.props;
+---
+
+<Section
+  id="articles"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="articles-heading"
+  data-article-grid
+>
+  <BlogBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="All Insights"
+      heading={['Browse by topic', 'and discipline.']}
+      description="Filter the library to explore AI systems, software architecture, automation, and product engineering."
+      headingId="articles-heading"
+      class="mb-8 md:mb-10"
+    />
+
+    <CategoryTabs class="mb-10 md:mb-12" />
+
+    <ul
+      class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 lg:gap-8"
+      data-article-list
+      role="list"
+    >
+      {
+        posts.map((post) => (
+          <li class="min-w-0">
+            <ArticleCard post={post} />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>

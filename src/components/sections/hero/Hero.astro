@@ -1,0 +1,50 @@
+---
+import Container from '@/components/ui/Container.astro';
+import HeroBackground from '@/components/sections/hero/HeroBackground.astro';
+import HeroContent from '@/components/sections/hero/HeroContent.astro';
+import HeroVisual from '@/components/sections/hero/HeroVisual.astro';
+import ScrollIndicator from '@/components/sections/hero/ScrollIndicator.astro';
+---
+
+<section
+  id="hero"
+  class="relative flex min-h-[100svh] items-center overflow-hidden pt-16 md:pt-20"
+  aria-labelledby="hero-heading"
+  data-hero
+>
+  <HeroBackground />
+
+  <Container class="relative z-10 w-full py-12 md:py-16 lg:py-20">
+    <div class="grid items-center gap-12 lg:grid-cols-2 lg:gap-16 xl:gap-20">
+      <HeroContent />
+
+      <div class="relative" data-hero-visual>
+        <HeroVisual />
+      </div>
+    </div>
+  </Container>
+
+  <ScrollIndicator />
+</section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible(
+      '[data-hero]',
+      async (root) => {
+        const { playHeroEntrance, startHeroAmbientMotion } = await import('@/lib/hero-animations');
+        playHeroEntrance(root);
+        startHeroAmbientMotion(root);
+      },
+      { idle: true, idleTimeout: 700 },
+    );
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

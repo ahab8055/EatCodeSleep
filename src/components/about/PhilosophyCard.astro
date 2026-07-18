@@ -1,0 +1,35 @@
+---
+import { Gem, Lightbulb, Scaling, Sparkles } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { AboutPrinciple, AboutPrincipleIcon } from '@/types/about';
+
+export interface Props {
+  principle: AboutPrinciple;
+  class?: string;
+}
+
+const { principle, class: className }: Props = Astro.props;
+
+const icons: Record<AboutPrincipleIcon, typeof Sparkles> = {
+  sparkles: Sparkles,
+  scaling: Scaling,
+  gem: Gem,
+  lightbulb: Lightbulb,
+};
+
+const Icon = icons[principle.icon];
+---
+
+<article
+  class={cn(
+    'h-full rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 backdrop-blur-xl sm:p-6',
+    className,
+  )}
+  data-philosophy-card
+>
+  <div class="mb-4 inline-flex size-10 items-center justify-center rounded-xl border border-border bg-white/5 text-secondary">
+    <Icon class="size-5" aria-hidden="true" />
+  </div>
+  <h3 class="font-display text-lg tracking-tight text-foreground">{principle.title}</h3>
+  <p class="text-body-sm mt-2 text-pretty">{principle.description}</p>
+</article>

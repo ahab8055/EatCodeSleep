@@ -1,0 +1,88 @@
+---
+import { Minus, Plus } from '@lucide/astro';
+import { cn } from '@/lib/cn';
+import type { FaqItem } from '@/types/faq';
+
+export interface Props {
+  item: FaqItem;
+  class?: string;
+}
+
+const { item, class: className }: Props = Astro.props;
+const panelId = `faq-panel-${item.id}`;
+const triggerId = `faq-trigger-${item.id}`;
+---
+
+<div
+  class={cn(
+    'faq-item group overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/55 backdrop-blur-xl transition-[border-color,box-shadow] duration-300 hover:border-white/15 hover:shadow-[0_16px_40px_rgb(0_0_0_/0.28),0_0_30px_rgb(79_70_229_/0.1)]',
+    className,
+  )}
+  data-faq-item
+  data-open="false"
+>
+  <h3 class="m-0">
+    <button
+      id={triggerId}
+      type="button"
+      class="flex w-full items-center justify-between gap-4 px-5 py-4 text-left transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-inset sm:px-6 sm:py-5"
+      aria-expanded="false"
+      aria-controls={panelId}
+      data-faq-trigger
+    >
+      <span class="font-display text-base tracking-tight text-foreground sm:text-lg">
+        {item.question}
+      </span>
+      <span
+        class="faq-item__icon relative inline-flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-white/5 text-secondary"
+        aria-hidden="true"
+      >
+        <Plus class="faq-item__plus size-4 transition-all duration-[var(--faq-accordion-duration,400ms)] ease-out" />
+        <Minus class="faq-item__minus absolute size-4 opacity-0 transition-all duration-[var(--faq-accordion-duration,400ms)] ease-out" />
+      </span>
+    </button>
+  </h3>
+
+  <div
+    id={panelId}
+    role="region"
+    aria-labelledby={triggerId}
+    class="faq-item__panel overflow-hidden"
+    data-faq-panel
+  >
+    <div class="px-5 pb-5 sm:px-6 sm:pb-6">
+      <p class="text-body max-w-2xl text-pretty">
+        {item.answer}
+      </p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .faq-item__panel {
+    height: 0;
+    transition: height var(--faq-accordion-duration, 400ms) ease-out;
+  }
+
+  .faq-item[data-open='true'] .faq-item__plus {
+    opacity: 0;
+    transform: rotate(90deg) scale(0.8);
+  }
+
+  .faq-item[data-open='true'] .faq-item__minus {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+
+  .faq-item__minus {
+    transform: rotate(-90deg) scale(0.8);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .faq-item__panel,
+    .faq-item__plus,
+    .faq-item__minus {
+      transition: none;
+    }
+  }
+</style>

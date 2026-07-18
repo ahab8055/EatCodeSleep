@@ -1,0 +1,143 @@
+---
+import { Bot, Cloud, CodeXml, Workflow } from '@lucide/astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import AvailabilityBadge from '@/components/sections/cta/AvailabilityBadge.astro';
+import CTAButton from '@/components/sections/cta/CTAButton.astro';
+import CTAVisual from '@/components/sections/cta/CTAVisual.astro';
+import FinalCTABackground from '@/components/sections/cta/FinalCTABackground.astro';
+import { finalCtaContent } from '@/data/cta';
+
+const techIcons = [
+  { label: 'React', Icon: CodeXml },
+  { label: 'AI', Icon: Bot },
+  { label: 'Cloud', Icon: Cloud },
+  { label: 'Automation', Icon: Workflow },
+] as const;
+---
+
+<Section
+  id="contact-cta"
+  spacing="none"
+  class="scroll-mt-20 flex min-h-[80vh] items-center overflow-hidden py-20 md:py-28 lg:py-32"
+  ariaLabelledby="final-cta-heading"
+>
+  <FinalCTABackground />
+
+  <Container class="relative z-10 w-full">
+    <div
+      class="grid items-center gap-12 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)] lg:gap-16 xl:gap-20"
+    >
+      <div class="mx-auto max-w-3xl text-center lg:mx-0 lg:max-w-none lg:text-left">
+        <p class="text-label text-secondary" data-cta-eyebrow>
+          {finalCtaContent.eyebrow}
+        </p>
+
+        <h2
+          id="final-cta-heading"
+          class="final-cta-heading mt-5 font-display font-semibold tracking-tight text-foreground md:mt-6"
+        >
+          {
+            finalCtaContent.headingLines.map((line) => (
+              <span class="block">
+                {line.split(' ').map((word) => (
+                  <span class="inline-block overflow-hidden align-bottom">
+                    <span class="inline-block pr-[0.28em] last:pr-0" data-cta-word>
+                      {word}
+                    </span>
+                  </span>
+                ))}
+              </span>
+            ))
+          }
+        </h2>
+
+        <p
+          class="text-body-lg mx-auto mt-6 max-w-[650px] text-pretty md:mt-8 lg:mx-0"
+          data-cta-description
+        >
+          {finalCtaContent.description}
+        </p>
+
+        <div
+          class="mt-8 flex flex-col items-stretch justify-center gap-3 sm:flex-row sm:items-center md:mt-10 lg:justify-start"
+        >
+          <CTAButton
+            href={finalCtaContent.primaryCta.href}
+            variant="primary"
+            class="w-full sm:w-auto"
+          >
+            {finalCtaContent.primaryCta.label}
+          </CTAButton>
+          <CTAButton
+            href={finalCtaContent.secondaryCta.href}
+            variant="secondary"
+            showArrow={false}
+            class="w-full sm:w-auto"
+          >
+            {finalCtaContent.secondaryCta.label}
+          </CTAButton>
+        </div>
+
+        <div class="mt-8 flex justify-center md:mt-10 lg:justify-start">
+          <AvailabilityBadge />
+        </div>
+
+        <div class="mt-6 md:mt-8" data-cta-social>
+          <p class="text-body-sm mx-auto max-w-md text-pretty lg:mx-0">
+            {finalCtaContent.socialProof}
+          </p>
+          <ul
+            class="mt-4 flex flex-wrap items-center justify-center gap-3 lg:justify-start"
+            aria-label="Technology focus areas"
+          >
+            {
+              techIcons.map(({ label, Icon }) => (
+                <li class="inline-flex items-center gap-1.5 rounded-full border border-border bg-white/5 px-2.5 py-1 text-xs text-muted">
+                  <Icon class="size-3 text-secondary" aria-hidden="true" />
+                  <span>{label}</span>
+                </li>
+              ))
+            }
+          </ul>
+        </div>
+      </div>
+
+      <div class="mx-auto w-full max-w-md lg:max-w-none">
+        <CTAVisual />
+      </div>
+    </div>
+  </Container>
+</Section>
+
+<style>
+  .final-cta-heading {
+    font-size: clamp(2.5rem, 12vw, 4rem);
+    line-height: 1.05;
+    letter-spacing: -0.04em;
+  }
+
+  @media (min-width: 768px) {
+    .final-cta-heading {
+      font-size: clamp(3rem, 8vw, 7rem);
+    }
+  }
+</style>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#contact-cta', async (root) => {
+      const { playFinalCtaEntrance, startFinalCtaAmbient } = await import('@/lib/cta-animations');
+      playFinalCtaEntrance(root);
+      startFinalCtaAmbient(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

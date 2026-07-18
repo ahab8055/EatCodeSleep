@@ -1,0 +1,85 @@
+---
+import { cn } from '@/lib/cn';
+import Heading from '@/components/ui/Heading.astro';
+import type { HeadingLevel, HeadingSize } from '@/types/components';
+
+export interface Props {
+  label: string;
+  heading: string | readonly string[];
+  description?: string;
+  as?: HeadingLevel;
+  size?: HeadingSize;
+  headingId?: string;
+  align?: 'left' | 'center';
+  class?: string;
+  descriptionClass?: string;
+}
+
+const {
+  label,
+  heading,
+  description,
+  as = 2,
+  size = 'lg',
+  headingId,
+  align = 'left',
+  class: className,
+  descriptionClass,
+}: Props = Astro.props;
+
+const lines = typeof heading === 'string' ? [heading] : [...heading];
+---
+
+<div
+  class={cn(
+    'relative z-10 max-w-3xl',
+    align === 'center' && 'mx-auto text-center',
+    className,
+  )}
+  data-section-heading
+>
+  <p
+    class={cn(
+      'text-label text-secondary',
+      align === 'center' && 'justify-center',
+    )}
+    data-section-label
+  >
+    {label}
+  </p>
+
+  <Heading
+    as={as}
+    size={size}
+    id={headingId}
+    balance={false}
+    class={cn('mt-4 md:mt-5', align === 'center' && 'mx-auto')}
+  >
+    {
+      lines.map((line) => (
+        <span class="block overflow-hidden">
+          <span class="block" data-section-line>
+            {line}
+          </span>
+        </span>
+      ))
+    }
+  </Heading>
+
+  {
+    description && (
+      <p
+        class={cn(
+          'text-body-lg mt-5 max-w-[700px] text-pretty md:mt-6',
+          align === 'center' && 'mx-auto',
+          descriptionClass,
+        )}
+        data-section-description
+      >
+        {description}
+      </p>
+    )
+  }
+
+  <slot />
+</div>

@@ -1,0 +1,145 @@
+---
+import { ArrowRight, Bot, BrainCircuit, Code2, ServerCog, Smartphone, Workflow } from '@lucide/astro';
+import TechBadge from '@/components/ui/TechBadge.astro';
+import ServiceEcosystem from '@/components/visuals/ServiceEcosystem.astro';
+import { cn } from '@/lib/cn';
+import type { Service, ServiceIconName } from '@/types/services';
+
+export interface Props {
+  service: Service;
+  class?: string;
+}
+
+const { service, class: className }: Props = Astro.props;
+
+const icons: Record<ServiceIconName, typeof Code2> = {
+  'code-2': Code2,
+  smartphone: Smartphone,
+  'brain-circuit': BrainCircuit,
+  bot: Bot,
+  workflow: Workflow,
+  'server-cog': ServerCog,
+};
+
+const Icon = icons[service.icon];
+---
+
+<article
+  class={cn('service-card group relative h-full', className)}
+  data-service-card
+  data-service-id={service.id}
+>
+  <div
+    class="service-card__glow pointer-events-none absolute inset-0 rounded-[var(--radius-ds)] opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+    aria-hidden="true"
+  >
+  </div>
+
+  <a
+    href={service.href}
+    class="service-card__surface relative flex h-full flex-col overflow-hidden rounded-[var(--radius-ds)] border border-border bg-background-card/60 p-6 backdrop-blur-xl transition-[border-color,box-shadow] duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background sm:p-7 md:p-8"
+    aria-label={`${service.title}. Learn more`}
+  >
+    <div
+      class="mb-5 inline-flex size-12 items-center justify-center rounded-[calc(var(--radius-ds)-4px)] border border-border bg-white/5 text-secondary transition-transform duration-300 ease-out group-hover:rotate-6 md:mb-6"
+      data-service-icon
+    >
+      <Icon class="size-5" aria-hidden="true" />
+    </div>
+
+    <h3 class="font-display text-xl tracking-tight text-foreground md:text-2xl">
+      {service.title}
+    </h3>
+
+    <p class="text-body mt-3 text-pretty">
+      {service.description}
+    </p>
+
+    <ServiceEcosystem serviceId={service.id} />
+
+    <ul class="mt-5 flex flex-wrap gap-2 md:mt-6" aria-label={`${service.title} technologies`}>
+      {
+        service.technologies.map((tech) => (
+          <li class="service-card__badge">
+            <TechBadge>{tech}</TechBadge>
+          </li>
+        ))
+      }
+    </ul>
+
+    <span class="mt-6 inline-flex items-center gap-2 text-sm font-medium text-foreground md:mt-8">
+      Learn More
+      <ArrowRight
+        class="size-4 transition-transform duration-300 ease-out group-hover:translate-x-1"
+        aria-hidden="true"
+      />
+    </span>
+  </a>
+</article>
+
+<style>
+  .service-card {
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    --tilt-scale: 1;
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+    transform: perspective(900px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y))
+      scale3d(var(--tilt-scale), var(--tilt-scale), var(--tilt-scale));
+    transform-style: preserve-3d;
+    will-change: transform;
+  }
+
+  .service-card__glow {
+    background: radial-gradient(
+      520px circle at var(--mouse-x) var(--mouse-y),
+      rgb(79 70 229 / 0.2),
+      transparent 42%
+    );
+  }
+
+  .service-card:hover .service-card__surface,
+  .service-card:focus-within .service-card__surface {
+    border-color: rgb(255 255 255 / 0.14);
+    box-shadow:
+      0 20px 50px rgb(0 0 0 / 0.35),
+      0 0 40px rgb(79 70 229 / 0.12);
+  }
+
+  .service-card:hover .service-card__badge .tech-badge,
+  .service-card:focus-within .service-card__badge .tech-badge {
+    transform: translateY(-4px);
+    border-color: rgb(255 255 255 / 0.14);
+    color: rgb(255 255 255 / 0.92);
+  }
+
+  .service-card__badge:nth-child(1) .tech-badge {
+    transition-delay: 0ms;
+  }
+  .service-card__badge:nth-child(2) .tech-badge {
+    transition-delay: 20ms;
+  }
+  .service-card__badge:nth-child(3) .tech-badge {
+    transition-delay: 40ms;
+  }
+  .service-card__badge:nth-child(4) .tech-badge {
+    transition-delay: 60ms;
+  }
+  .service-card__badge:nth-child(5) .tech-badge {
+    transition-delay: 80ms;
+  }
+  .service-card__badge:nth-child(6) .tech-badge {
+    transition-delay: 100ms;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .service-card {
+      transform: none;
+    }
+
+    .service-card:hover .service-card__badge .tech-badge,
+    .service-card:focus-within .service-card__badge .tech-badge {
+      transform: none;
+    }
+  }
+</style>

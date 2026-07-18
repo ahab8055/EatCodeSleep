@@ -1,0 +1,58 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import FAQBackground from '@/components/sections/faq/FAQBackground.astro';
+import FAQSidebar from '@/components/sections/faq/FAQSidebar.astro';
+import FAQAccordion from '@/components/sections/faq/FAQAccordion.astro';
+import { faqSection } from '@/data/faqs';
+---
+
+<Section
+  id="faq"
+  spacing="xl"
+  class="content-auto scroll-mt-20 overflow-hidden"
+  ariaLabelledby="faq-heading"
+>
+  <FAQBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label={faqSection.label}
+      heading={faqSection.headingLines}
+      description={faqSection.description}
+      headingId="faq-heading"
+      size="lg"
+      descriptionClass="max-w-[650px]"
+      class="mb-12 md:mb-16"
+    />
+
+    <div class="grid grid-cols-1 items-start gap-8 lg:grid-cols-[minmax(0,22rem)_minmax(0,1fr)] lg:gap-12 xl:grid-cols-[minmax(0,24rem)_minmax(0,1fr)] xl:gap-16">
+      <FAQSidebar />
+      <FAQAccordion />
+    </div>
+  </Container>
+</Section>
+
+<script>
+  import { bootWhenVisible } from '@/lib/bootWhenVisible';
+
+  let dispose: (() => void) | undefined;
+
+  function schedule(): void {
+    dispose?.();
+    dispose = bootWhenVisible('#faq', async (root) => {
+      const [{ playFaqHeader, playFaqSidebar, playFaqItems, startFaqAmbient }, { initFaqAccordion }] =
+        await Promise.all([import('@/lib/faq-animations'), import('@/lib/faq-accordion')]);
+
+      playFaqHeader(root);
+      playFaqSidebar(root);
+      playFaqItems(root);
+      startFaqAmbient(root);
+      initFaqAccordion(root);
+    });
+  }
+
+  schedule();
+  document.addEventListener('astro:page-load', schedule);
+</script>

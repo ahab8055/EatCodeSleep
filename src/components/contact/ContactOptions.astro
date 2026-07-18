@@ -1,0 +1,74 @@
+---
+import { ArrowRight, Calendar, Mail, MessageSquare } from '@lucide/astro';
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ContactBackground from '@/components/contact/ContactBackground.astro';
+import { contactOptions } from '@/data/contact';
+import { isAbsoluteHttpUrl } from '@/lib/booking';
+import type { ContactOptionIcon } from '@/types/contact';
+
+const icons: Record<ContactOptionIcon, typeof Calendar> = {
+  calendar: Calendar,
+  'message-square': MessageSquare,
+  mail: Mail,
+};
+---
+
+<Section
+  id="contact-options"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="contact-options-heading"
+  data-contact-options
+>
+  <ContactBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Ways to Connect"
+      heading={['Choose how you want', 'to start the conversation.']}
+      description="Whether you need a discovery call or want to share project details first, we are ready to help."
+      headingId="contact-options-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ul
+      class="grid grid-cols-1 gap-4 md:grid-cols-3 md:gap-6"
+      data-contact-options-grid
+      role="list"
+    >
+      {
+        contactOptions.map((option) => {
+          const Icon = icons[option.icon];
+          const isExternal = Boolean(option.external || isAbsoluteHttpUrl(option.href));
+          return (
+            <li class="min-w-0" data-contact-option-card>
+              <article class="flex h-full flex-col rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-6 backdrop-blur-xl transition-[border-color,transform,box-shadow] duration-300 hover:-translate-y-1 hover:border-white/15 hover:shadow-[0_20px_50px_rgb(0_0_0_/0.3)] sm:p-7">
+                <div class="mb-5 inline-flex size-11 items-center justify-center rounded-xl border border-border bg-white/5 text-secondary">
+                  <Icon class="size-5" aria-hidden="true" />
+                </div>
+                <h3 class="font-display text-xl tracking-tight text-foreground">{option.title}</h3>
+                <p class="text-body mt-3 flex-1 text-pretty">{option.description}</p>
+                <a
+                  href={option.href}
+                  class="group mt-6 inline-flex items-center gap-2 text-sm font-medium text-foreground transition-colors hover:text-secondary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary"
+                  target={isExternal ? '_blank' : undefined}
+                  rel={isExternal ? 'noopener noreferrer' : undefined}
+                >
+                  {option.ctaLabel}
+                  {!option.email && (
+                    <ArrowRight
+                      class="size-4 transition-transform duration-300 group-hover:translate-x-1"
+                      aria-hidden="true"
+                    />
+                  )}
+                </a>
+              </article>
+            </li>
+          );
+        })
+      }
+    </ul>
+  </Container>
+</Section>

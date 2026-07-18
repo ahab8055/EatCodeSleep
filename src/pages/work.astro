@@ -1,0 +1,145 @@
+---
+import MainLayout from '@/layouts/MainLayout.astro';
+import WorkHero from '@/components/work/WorkHero.astro';
+import FeaturedProjects from '@/components/work/FeaturedProjects.astro';
+import CaseStudyPreview from '@/components/work/CaseStudyPreview.astro';
+import CaseStudyGrid from '@/components/work/CaseStudyGrid.astro';
+import TechnologyList from '@/components/work/TechnologyList.astro';
+import WorkCTA from '@/components/work/WorkCTA.astro';
+import { workPageJsonLd, workPageSeo } from '@/data/projects';
+---
+
+<MainLayout
+  title={workPageSeo.title}
+  description={workPageSeo.description}
+  seo={{
+    canonical: workPageSeo.canonical,
+    keywords: [...workPageSeo.keywords],
+    openGraph: {
+      description: workPageSeo.description,
+      url: workPageSeo.canonical,
+      type: 'website',
+    },
+    twitter: {
+      description: workPageSeo.description,
+    },
+    jsonLd: workPageJsonLd,
+  }}
+>
+  <WorkHero />
+  <FeaturedProjects />
+  <CaseStudyPreview />
+  <CaseStudyGrid />
+  <TechnologyList />
+  <WorkCTA />
+</MainLayout>
+
+<script>
+  import {
+    initProjectFilter,
+    playWorkHero,
+    playWorkReveal,
+    startWorkAmbient,
+  } from '@/lib/work-page-animations';
+  import { gsap } from '@/lib/gsap';
+  import { getPrefersReducedMotion } from '@/hooks/useReducedMotion';
+  import { ANIMATION } from '@/lib/constants';
+
+  function initWorkPage(): void {
+    const main = document.querySelector('main');
+    if (!main) return;
+
+    const hero = document.querySelector<HTMLElement>('[data-work-hero]');
+    if (hero) playWorkHero(hero);
+
+    const featured = document.querySelector<HTMLElement>('[data-featured-projects]');
+    if (featured) {
+      playWorkReveal(
+        featured,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'featuredHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playWorkReveal(
+        featured,
+        '[data-featured-card]',
+        'featuredCardsAnimated',
+        '[data-featured-grid]',
+      );
+    }
+
+    const preview = document.querySelector<HTMLElement>('[data-case-study-preview]');
+    if (preview) {
+      playWorkReveal(
+        preview,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'previewHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playWorkReveal(
+        preview,
+        '[data-case-study-step]',
+        'previewStepsAnimated',
+        '[data-case-study-steps]',
+      );
+    }
+
+    const grid = document.querySelector<HTMLElement>('[data-case-study-grid]');
+    if (grid) {
+      playWorkReveal(
+        grid,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'gridHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playWorkReveal(
+        grid,
+        '[data-case-study-card]',
+        'gridCardsAnimated',
+        '[data-case-study-list]',
+      );
+      initProjectFilter(grid);
+    }
+
+    const tech = document.querySelector<HTMLElement>('[data-work-technologies]');
+    if (tech) {
+      playWorkReveal(
+        tech,
+        '[data-section-line], [data-section-label], [data-section-description]',
+        'techHeaderAnimated',
+        '[data-section-heading]',
+      );
+      playWorkReveal(
+        tech,
+        '[data-work-tech-group]',
+        'techGroupsAnimated',
+        '[data-work-tech-groups]',
+      );
+    }
+
+    const cta = document.querySelector<HTMLElement>('[data-work-cta]');
+    if (cta) {
+      const panel = cta.querySelector<HTMLElement>('[data-work-cta-panel]');
+      if (panel && !getPrefersReducedMotion() && cta.dataset.ctaAnimated !== 'true') {
+        cta.dataset.ctaAnimated = 'true';
+        gsap.fromTo(
+          panel,
+          { opacity: 0, y: 24, scale: 0.985 },
+          {
+            opacity: 1,
+            y: 0,
+            scale: 1,
+            duration: ANIMATION.duration.slow,
+            ease: ANIMATION.ease.power3,
+            scrollTrigger: { trigger: panel, start: 'top 85%', once: true },
+          },
+        );
+      }
+    }
+
+    startWorkAmbient(main);
+  }
+
+  initWorkPage();
+  document.addEventListener('astro:page-load', initWorkPage);
+</script>

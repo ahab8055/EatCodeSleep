@@ -1,0 +1,84 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ContactBackground from '@/components/contact/ContactBackground.astro';
+import { contactProcessSteps } from '@/data/contact';
+---
+
+<Section
+  id="what-happens-next"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="process-timeline-heading"
+  data-contact-process
+>
+  <ContactBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Next Steps"
+      heading={['What happens after', 'you contact us?']}
+      description="A clear path from first message to building together."
+      headingId="process-timeline-heading"
+      class="mb-12 md:mb-16"
+    />
+
+    <ol class="contact-process relative" data-process-list>
+      {
+        contactProcessSteps.map((step, index) => (
+          <li class="contact-process__item" data-process-item>
+            <div class="rounded-[var(--radius-ds)] border border-border bg-background-card/55 p-5 backdrop-blur-xl sm:p-6">
+              <p class="font-display text-sm text-secondary">{step.number}</p>
+              <h3 class="mt-2 font-display text-xl tracking-tight text-foreground">
+                {step.title}
+              </h3>
+              <p class="text-body mt-3 text-pretty">{step.description}</p>
+            </div>
+            {index < contactProcessSteps.length - 1 && (
+              <span class="contact-process__connector" aria-hidden="true">
+                ↓
+              </span>
+            )}
+          </li>
+        ))
+      }
+    </ol>
+  </Container>
+</Section>
+
+<style>
+  .contact-process {
+    display: grid;
+    gap: 1rem;
+  }
+
+  .contact-process__connector {
+    display: flex;
+    justify-content: center;
+    padding-block: 0.25rem;
+    color: var(--color-secondary);
+    font-size: 0.875rem;
+  }
+
+  @media (min-width: 768px) {
+    .contact-process {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1.25rem;
+    }
+
+    .contact-process__item {
+      position: relative;
+    }
+
+    .contact-process__connector {
+      position: absolute;
+      top: 50%;
+      right: -0.85rem;
+      z-index: 1;
+      display: block;
+      padding: 0;
+      transform: translateY(-50%) rotate(-90deg);
+    }
+  }
+</style>

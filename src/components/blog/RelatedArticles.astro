@@ -1,0 +1,39 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import ArticleCard from '@/components/blog/ArticleCard.astro';
+import type { BlogPost } from '@/data/blog';
+
+export interface Props {
+  posts: BlogPost[];
+}
+
+const { posts }: Props = Astro.props;
+---
+
+{
+  posts.length > 0 && (
+    <Section
+      id="related-articles"
+      spacing="xl"
+      class="scroll-mt-28 border-t border-border/60"
+      ariaLabelledby="related-articles-heading"
+    >
+      <Container>
+        <h2
+          id="related-articles-heading"
+          class="font-display text-2xl tracking-tight text-foreground md:text-3xl"
+        >
+          Related articles
+        </h2>
+        <ul class="mt-8 grid grid-cols-1 gap-6 md:grid-cols-3 md:gap-8" role="list">
+          {posts.map((post) => (
+            <li class="min-w-0">
+              <ArticleCard post={post} />
+            </li>
+          ))}
+        </ul>
+      </Container>
+    </Section>
+  )
+}

@@ -1,0 +1,45 @@
+---
+import Container from '@/components/ui/Container.astro';
+import Section from '@/components/ui/Section.astro';
+import SectionHeading from '@/components/ui/SectionHeading.astro';
+import ProjectCard from '@/components/work/ProjectCard.astro';
+import ProjectFilter from '@/components/work/ProjectFilter.astro';
+import WorkBackground from '@/components/work/WorkBackground.astro';
+import { projects } from '@/data/projects';
+---
+
+<Section
+  id="case-studies"
+  spacing="xl"
+  class="scroll-mt-28 overflow-hidden"
+  ariaLabelledby="case-studies-heading"
+  data-case-study-grid
+>
+  <WorkBackground />
+
+  <Container class="relative z-10">
+    <SectionHeading
+      label="Case Studies"
+      heading={['Browse projects by', 'industry and capability.']}
+      description="Filter the library to explore AI systems, web platforms, mobile products, and enterprise software."
+      headingId="case-studies-heading"
+      class="mb-8 md:mb-10"
+    />
+
+    <ProjectFilter class="mb-10 md:mb-12" />
+
+    <ul
+      class="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-8"
+      data-case-study-list
+      role="list"
+    >
+      {
+        projects.map((project) => (
+          <li class="min-w-0">
+            <ProjectCard project={project} variant="grid" />
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+</Section>
