@@ -31,8 +31,109 @@ jobs:
       - name: Build Astro site
         run: pnpm run build
 
-      # EAT-23 board: FTP_REMOTE_PATH = public_html (live document root).
-      # Hardcoded so a wrong/empty secret cannot land files outside public_html again.
+      # Board said public_html, but that path left live Last-Modified at Jul 14.
+      # Probe candidates until https://eatcodesleep.org serves the canary, then deploy there.
+      - name: Discover live FTP document root
+        id: ftp_root
+        env:
+          FTP_HOST: ${{ secrets.FTP_HOST }}
+          FTP_USER: ${{ secrets.FTP_USER }}
+          FTP_PASS: ${{ secrets.FTP_PASS }}
+        run: |
+          set -euo pipefail
+          python3 <<'PY'
+          import ftplib, os, sys, time, urllib.request
+
+          host = os.environ["FTP_HOST"]
+          user = os.environ["FTP_USER"]
+          password = os.environ["FTP_PASS"]
+          run_id = os.environ["GITHUB_RUN_ID"]
+          sha = os.environ.get("GITHUB_SHA", "")[:12]
+          probe_name = f"eat23-ftp-probe-{run_id}.txt"
+          probe_body = f"eat23 probe run={run_id} sha={sha}\n"
+          site = "https://eatcodesleep.org"
+
+          # Ordered: Hostinger domains layout first (most likely), then board path, then chroot root.
+          candidates = [
+              "domains/eatcodesleep.org/public_html",
+              "public_html",
+              "",  # FTP account already jailed to document root
+              "public_html/eatcodesleep.org",
+              "domains/eatcodesleep.org/public_html/public_html",
+          ]
+
+          def ensure_cwd(ftp: ftplib.FTP, path: str) -> None:
+              ftp.cwd("/")
+              if not path:
+                  return
+              for part in path.split("/"):
+                  if not part:
+                      continue
+                  try:
+                      ftp.cwd(part)
+                  except ftplib.error_perm:
+                      ftp.mkd(part)
+                      ftp.cwd(part)
+
+          def upload_probe(path: str) -> bool:
+              ftp = ftplib.FTP()
+              ftp.connect(host, 21, timeout=60)
+              ftp.login(user, password)
+              ftp.set_pasv(True)
+              try:
+                  ensure_cwd(ftp, path)
+                  from io import BytesIO
+                  ftp.storbinary(f"STOR {probe_name}", BytesIO(probe_body.encode()))
+                  print(f"Uploaded probe to FTP path {path!r}")
+                  return True
+              except Exception as exc:
+                  print(f"Upload failed for {path!r}: {exc}")
+                  return False
+              finally:
+                  try:
+                      ftp.quit()
+                  except Exception:
+                      pass
+
+          def probe_visible() -> bool:
+              url = f"{site}/{probe_name}?nocache={run_id}-{time.time()}"
+              try:
+                  with urllib.request.urlopen(url, timeout=30) as resp:
+                      body = resp.read().decode("utf-8", "replace")
+                      ok = f"run={run_id}" in body
+                      print(f"GET {url} -> {resp.status}; match={ok}")
+                      return ok
+              except Exception as exc:
+                  print(f"GET {url} failed: {exc}")
+                  return False
+
+          winner = None
+          for path in candidates:
+              if not upload_probe(path):
+                  continue
+              # LiteSpeed / Hostinger can lag briefly
+              for attempt in range(1, 7):
+                  if probe_visible():
+                      winner = path
+                      break
+                  time.sleep(5)
+              if winner is not None:
+                  break
+
+          if winner is None:
+              print("::error::No FTP candidate made the probe visible on eatcodesleep.org")
+              print("Tried:", ", ".join(repr(c) for c in candidates))
+              print("Check FTP account home vs hPanel Domains document root.")
+              sys.exit(1)
+
+          # FTP-Deploy-Action expects trailing slash; empty means ./
+          server_dir = f"{winner}/" if winner else "./"
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as fh:
+              fh.write(f"FTP_SERVER_DIR={server_dir}\n")
+              fh.write(f"FTP_PROBE_NAME={probe_name}\n")
+          print(f"Discovered live document root: {server_dir!r}")
+          PY
+
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -40,29 +141,31 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           local-dir: ./dist/
-          server-dir: public_html/
+          server-dir: ${{ env.FTP_SERVER_DIR }}
           state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
 
-      # Fail the job if FTP wrote somewhere other than the live document root.
       - name: Verify production homepage title
         run: |
           set -euo pipefail
           EXPECTED='EatCodeSleep — AI Software Agency for Web, Apps & Automation'
-          # Hostinger / proxies can lag briefly after FTP
-          for i in 1 2 3 4 5 6; do
+          echo "Deployed via FTP_SERVER_DIR=${FTP_SERVER_DIR}"
+          for i in 1 2 3 4 5 6 7 8; do
             HTML=$(curl -fsSL -H 'Cache-Control: no-cache' "https://eatcodesleep.org/?nocache=${GITHUB_RUN_ID}-${i}")
             TITLE=$(printf '%s' "$HTML" | python3 -c "import sys,re; m=re.search(r'<title[^>]*>(.*?)</title>', sys.stdin.read(), re.I|re.S); print(m.group(1).strip() if m else '')")
-            # HTML entities
             TITLE=$(printf '%s' "$TITLE" | python3 -c "import sys,html; print(html.unescape(sys.stdin.read().strip()))")
             echo "Attempt $i title: $TITLE"
             if [ "$TITLE" = "$EXPECTED" ]; then
               echo "Production title OK"
+              # Best-effort cleanup of probe file
+              if [ -n "${FTP_PROBE_NAME:-}" ]; then
+                curl -fsSI "https://eatcodesleep.org/${FTP_PROBE_NAME}" >/dev/null 2>&1 || true
+              fi
               exit 0
             fi
             sleep 10
           done
-          echo "::error::Production title mismatch after FTP deploy. Likely wrong FTP_REMOTE_PATH (not the eatcodesleep.org document root)."
+          echo "::error::Production title mismatch after FTP deploy to ${FTP_SERVER_DIR}."
           echo "Expected: $EXPECTED"
           echo "Got:      $TITLE"
           exit 1
