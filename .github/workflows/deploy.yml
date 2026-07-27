@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - main
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
@@ -40,3 +41,26 @@ jobs:
           server-dir: ${{ secrets.FTP_REMOTE_PATH }}/
           state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
+
+      # Fail the job if FTP wrote somewhere other than the live document root.
+      - name: Verify production homepage title
+        run: |
+          set -euo pipefail
+          EXPECTED='EatCodeSleep — AI Software Agency for Web, Apps & Automation'
+          # Hostinger / proxies can lag briefly after FTP
+          for i in 1 2 3 4 5 6; do
+            HTML=$(curl -fsSL -H 'Cache-Control: no-cache' "https://eatcodesleep.org/?nocache=${GITHUB_RUN_ID}-${i}")
+            TITLE=$(printf '%s' "$HTML" | python3 -c "import sys,re; m=re.search(r'<title[^>]*>(.*?)</title>', sys.stdin.read(), re.I|re.S); print(m.group(1).strip() if m else '')")
+            # HTML entities
+            TITLE=$(printf '%s' "$TITLE" | python3 -c "import sys,html; print(html.unescape(sys.stdin.read().strip()))")
+            echo "Attempt $i title: $TITLE"
+            if [ "$TITLE" = "$EXPECTED" ]; then
+              echo "Production title OK"
+              exit 0
+            fi
+            sleep 10
+          done
+          echo "::error::Production title mismatch after FTP deploy. Likely wrong FTP_REMOTE_PATH (not the eatcodesleep.org document root)."
+          echo "Expected: $EXPECTED"
+          echo "Got:      $TITLE"
+          exit 1
