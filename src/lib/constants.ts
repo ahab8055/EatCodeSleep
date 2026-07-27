@@ -65,4 +65,6 @@ export const SITE = {
   url: 'https://eatcodesleep.org',
   locale: 'en_US',
   twitterHandle: '@eatcodesleep',
+  /** GA4 Measurement ID (public; not a secret). EAT-170 */
+  gaMeasurementId: 'G-4EPHY5DFRX',
 } as const;
