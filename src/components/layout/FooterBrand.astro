@@ -1,4 +1,5 @@
 ---
+import Logo from '@/components/brand/Logo.astro';
 import { footerContent } from '@/data/navigation';
 import { cn } from '@/lib/cn';
 
@@ -10,23 +11,10 @@ const { class: className }: Props = Astro.props;
 ---
 
 <div class={cn('relative', className)} data-footer-brand>
-  <a
-    href="/"
-    class="footer-brand group block focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-4 focus-visible:ring-offset-background"
-    aria-label="EatCodeSleep home"
-  >
-    {
-      footerContent.brandLines.map((line, index) => (
-        <span
-          class="footer-brand__line block font-display font-semibold uppercase tracking-tight text-transparent"
-          data-footer-brand-line
-          data-line={index}
-        >
-          {line}
-        </span>
-      ))
-    }
-  </a>
+  <Logo
+    class="footer-brand"
+    imgClass="h-auto w-full max-w-sm md:max-w-md lg:max-w-xl"
+  />
 
   <p
     class="text-body mt-6 max-w-[450px] text-pretty md:mt-8"
@@ -35,38 +23,3 @@ const { class: className }: Props = Astro.props;
     {footerContent.description}
   </p>
 </div>
-
-<style>
-  .footer-brand__line {
-    font-size: clamp(4rem, 18vw, 8rem);
-    line-height: 0.88;
-    letter-spacing: -0.06em;
-    background: linear-gradient(
-      180deg,
-      rgb(255 255 255 / 0.95) 0%,
-      rgb(255 255 255 / 0.55) 55%,
-      rgb(148 163 184 / 0.35) 100%
-    );
-    background-clip: text;
-    -webkit-background-clip: text;
-    transition: filter 400ms ease, opacity 400ms ease;
-  }
-
-  .footer-brand__line[data-line='1'] {
-    opacity: 0.85;
-  }
-
-  .footer-brand__line[data-line='2'] {
-    opacity: 0.7;
-  }
-
-  .footer-brand:hover .footer-brand__line {
-    filter: drop-shadow(0 0 28px rgb(79 70 229 / 0.45));
-  }
-
-  @media (min-width: 768px) {
-    .footer-brand__line {
-      font-size: clamp(5rem, 15vw, 14rem);
-    }
-  }
-</style>

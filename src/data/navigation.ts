@@ -14,7 +14,6 @@ export interface SocialLink {
 }
 
 export interface FooterContent {
-  brandLines: readonly [string, string, string];
   description: string;
   email: string;
   location: string;
@@ -34,7 +33,6 @@ export interface FooterContent {
 }
 
 export const footerContent: FooterContent = {
-  brandLines: ['EAT', 'CODE', 'SLEEP'],
   description:
     'EatCodeSleep builds modern software products, AI-powered solutions, and automation systems that help businesses innovate, scale, and operate efficiently.',
   email: 'hello@eatcodesleep.com',

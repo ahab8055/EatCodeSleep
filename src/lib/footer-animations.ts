@@ -11,7 +11,7 @@ export function playFooterEntrance(root: HTMLElement): void {
   root.dataset.footerAnimated = 'true';
   registerGsapPlugins();
 
-  const brand = root.querySelectorAll<HTMLElement>('[data-footer-brand-line]');
+  const brand = root.querySelector<HTMLElement>('[data-footer-brand] a, [data-footer-brand] [data-footer-logo]');
   const description = root.querySelector<HTMLElement>('[data-footer-description]');
   const columns = root.querySelectorAll<HTMLElement>('[data-footer-column]');
   const newsletter = root.querySelector<HTMLElement>('[data-footer-newsletter]');
@@ -46,8 +46,8 @@ export function playFooterEntrance(root: HTMLElement): void {
     },
   });
 
-  if (brand.length) {
-    timeline.to(brand, { opacity: 1, y: 0, stagger: 0.08 });
+  if (brand) {
+    timeline.to(brand, { opacity: 1, y: 0 });
   }
 
   if (description) {

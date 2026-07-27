@@ -1,0 +1,62 @@
+---
+import { siteConfig } from '@/data/site';
+import { cn } from '@/lib/cn';
+
+export interface Props {
+  href?: string | false;
+  class?: string;
+  imgClass?: string;
+  priority?: boolean;
+  /** When true, sets data-nav-logo for navbar GSAP targeting */
+  navLogo?: boolean;
+}
+
+const {
+  href = '/',
+  class: className,
+  imgClass,
+  priority = false,
+  navLogo = false,
+}: Props = Astro.props;
+
+const alt = siteConfig.name;
+const ariaLabel = `${siteConfig.name} home`;
+---
+
+{
+  href === false ? (
+    <span class={cn('inline-flex items-center', className)}>
+      <img
+        src="/brand/logo-wordmark.png"
+        alt={alt}
+        width="689"
+        height="120"
+        class={cn('h-auto w-auto', imgClass)}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={priority ? 'high' : 'auto'}
+      />
+    </span>
+  ) : (
+    <a
+      href={href}
+      class={cn(
+        'inline-flex items-center transition-opacity duration-200 hover:opacity-80 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background',
+        className,
+      )}
+      aria-label={ariaLabel}
+      data-nav-logo={navLogo ? true : undefined}
+    >
+      <img
+        src="/brand/logo-wordmark.png"
+        alt=""
+        width="689"
+        height="120"
+        class={cn('h-auto w-auto', imgClass)}
+        loading={priority ? 'eager' : 'lazy'}
+        decoding="async"
+        fetchpriority={priority ? 'high' : 'auto'}
+      />
+    </a>
+  )
+}

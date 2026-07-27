@@ -1,5 +1,6 @@
 ---
 import { Menu, X } from '@lucide/astro';
+import Logo from '@/components/brand/Logo.astro';
 import Button from '@/components/ui/Button.astro';
 import Container from '@/components/ui/Container.astro';
 import { siteConfig } from '@/data/site';
@@ -32,14 +33,11 @@ const isActivePath = (href: string) => {
     as="div"
     class="flex h-16 items-center justify-between gap-4 md:h-20"
   >
-    <a
-      href="/"
-      class="font-display text-lg tracking-tight text-foreground transition-opacity duration-200 hover:opacity-80 md:text-xl"
-      aria-label={`${siteConfig.name} home`}
-      data-nav-logo
-    >
-      {siteConfig.name}
-    </a>
+    <Logo
+      priority
+      navLogo
+      imgClass="h-7 w-auto md:h-9"
+    />
 
     <nav class="hidden items-center gap-1 lg:flex" aria-label="Primary">
       {
