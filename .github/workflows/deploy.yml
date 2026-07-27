@@ -31,10 +31,11 @@ jobs:
       - name: Build Astro site
         run: pnpm run build
 
-      # Board said public_html, but that path left live Last-Modified at Jul 14.
-      # Probe candidates until https://eatcodesleep.org serves the canary, then deploy there.
-      - name: Discover live FTP document root
-        id: ftp_root
+      # Board public_html left live on Jul 14 HTML. Probe found
+      # domains/eatcodesleep.org/public_html (canary URL OK) but
+      # SamKirkland/FTP-Deploy-Action still skipped/missed index.html.
+      # Upload dist/ with the same ftplib cwd logic that placed the canary.
+      - name: Discover FTP root and deploy dist/
         env:
           FTP_HOST: ${{ secrets.FTP_HOST }}
           FTP_USER: ${{ secrets.FTP_USER }}
@@ -43,6 +44,8 @@ jobs:
           set -euo pipefail
           python3 <<'PY'
           import ftplib, os, sys, time, urllib.request
+          from io import BytesIO
+          from pathlib import Path
 
           host = os.environ["FTP_HOST"]
           user = os.environ["FTP_USER"]
@@ -52,22 +55,35 @@ jobs:
           probe_name = f"eat23-ftp-probe-{run_id}.txt"
           probe_body = f"eat23 probe run={run_id} sha={sha}\n"
           site = "https://eatcodesleep.org"
+          local_root = Path("dist").resolve()
 
-          # Ordered: Hostinger domains layout first (most likely), then board path, then chroot root.
           candidates = [
               "domains/eatcodesleep.org/public_html",
               "public_html",
-              "",  # FTP account already jailed to document root
+              "",
               "public_html/eatcodesleep.org",
-              "domains/eatcodesleep.org/public_html/public_html",
           ]
 
+          def connect() -> ftplib.FTP:
+              ftp = ftplib.FTP()
+              ftp.connect(host, 21, timeout=120)
+              ftp.login(user, password)
+              ftp.set_pasv(True)
+              return ftp
+
           def ensure_cwd(ftp: ftplib.FTP, path: str) -> None:
-              ftp.cwd("/")
+              # Prefer absolute from login root; fall back to relative.
+              for root in ("/", None):
+                  try:
+                      if root is not None:
+                          ftp.cwd(root)
+                      break
+                  except ftplib.error_perm:
+                      continue
               if not path:
                   return
               for part in path.split("/"):
-                  if not part:
+                  if not part or part == ".":
                       continue
                   try:
                       ftp.cwd(part)
@@ -75,25 +91,8 @@ jobs:
                       ftp.mkd(part)
                       ftp.cwd(part)
 
-          def upload_probe(path: str) -> bool:
-              ftp = ftplib.FTP()
-              ftp.connect(host, 21, timeout=60)
-              ftp.login(user, password)
-              ftp.set_pasv(True)
-              try:
-                  ensure_cwd(ftp, path)
-                  from io import BytesIO
-                  ftp.storbinary(f"STOR {probe_name}", BytesIO(probe_body.encode()))
-                  print(f"Uploaded probe to FTP path {path!r}")
-                  return True
-              except Exception as exc:
-                  print(f"Upload failed for {path!r}: {exc}")
-                  return False
-              finally:
-                  try:
-                      ftp.quit()
-                  except Exception:
-                      pass
+          def upload_bytes(ftp: ftplib.FTP, name: str, data: bytes) -> None:
+              ftp.storbinary(f"STOR {name}", BytesIO(data))
 
           def probe_visible() -> bool:
               url = f"{site}/{probe_name}?nocache={run_id}-{time.time()}"
@@ -107,12 +106,27 @@ jobs:
                   print(f"GET {url} failed: {exc}")
                   return False
 
+          def upload_probe(path: str) -> bool:
+              ftp = connect()
+              try:
+                  ensure_cwd(ftp, path)
+                  upload_bytes(ftp, probe_name, probe_body.encode())
+                  print(f"Uploaded probe to FTP path {path!r} (cwd={ftp.pwd()})")
+                  return True
+              except Exception as exc:
+                  print(f"Upload failed for {path!r}: {exc}")
+                  return False
+              finally:
+                  try:
+                      ftp.quit()
+                  except Exception:
+                      pass
+
           winner = None
           for path in candidates:
               if not upload_probe(path):
                   continue
-              # LiteSpeed / Hostinger can lag briefly
-              for attempt in range(1, 7):
+              for _ in range(6):
                   if probe_visible():
                       winner = path
                       break
@@ -123,44 +137,66 @@ jobs:
           if winner is None:
               print("::error::No FTP candidate made the probe visible on eatcodesleep.org")
               print("Tried:", ", ".join(repr(c) for c in candidates))
-              print("Check FTP account home vs hPanel Domains document root.")
               sys.exit(1)
 
-          # FTP-Deploy-Action expects trailing slash; empty means ./
-          server_dir = f"{winner}/" if winner else "./"
+          print(f"Discovered live document root: {winner!r}")
           with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as fh:
-              fh.write(f"FTP_SERVER_DIR={server_dir}\n")
+              fh.write(f"FTP_SERVER_DIR={winner or '.'}\n")
               fh.write(f"FTP_PROBE_NAME={probe_name}\n")
-          print(f"Discovered live document root: {server_dir!r}")
-          PY
 
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
-        with:
-          server: ${{ secrets.FTP_HOST }}
-          username: ${{ secrets.FTP_USER }}
-          password: ${{ secrets.FTP_PASS }}
-          local-dir: ./dist/
-          server-dir: ${{ env.FTP_SERVER_DIR }}
-          state-name: .ftp-deploy-sync-state.json
-          dangerous-clean-slate: false
+          # Mirror dist/ using the same cwd logic as the probe.
+          ftp = connect()
+          uploaded = 0
+          try:
+              ensure_cwd(ftp, winner)
+              base_pwd = ftp.pwd()
+              print(f"Deploying {local_root} -> FTP {base_pwd}")
+
+              for dirpath, dirnames, filenames in os.walk(local_root):
+                  rel = Path(dirpath).relative_to(local_root).as_posix()
+                  # Reset to deploy root then enter relative dir
+                  ftp.cwd(base_pwd)
+                  if rel != ".":
+                      for part in rel.split("/"):
+                          try:
+                              ftp.cwd(part)
+                          except ftplib.error_perm:
+                              ftp.mkd(part)
+                              ftp.cwd(part)
+                  for name in filenames:
+                      if name.startswith("."):
+                          continue
+                      local_file = Path(dirpath) / name
+                      with local_file.open("rb") as fh:
+                          ftp.storbinary(f"STOR {name}", fh)
+                      uploaded += 1
+                      if name == "index.html" or uploaded % 50 == 0:
+                          print(f"uploaded {uploaded}: {rel}/{name}")
+          finally:
+              try:
+                  ftp.quit()
+              except Exception:
+                  pass
+
+          print(f"Uploaded {uploaded} files to {winner!r}")
+          if uploaded < 1:
+              print("::error::No files uploaded from dist/")
+              sys.exit(1)
+          PY
 
       - name: Verify production homepage title
         run: |
           set -euo pipefail
           EXPECTED='EatCodeSleep — AI Software Agency for Web, Apps & Automation'
           echo "Deployed via FTP_SERVER_DIR=${FTP_SERVER_DIR}"
-          for i in 1 2 3 4 5 6 7 8; do
-            HTML=$(curl -fsSL -H 'Cache-Control: no-cache' "https://eatcodesleep.org/?nocache=${GITHUB_RUN_ID}-${i}")
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            HTML=$(curl -fsSL -H 'Cache-Control: no-cache' -H 'Pragma: no-cache' "https://eatcodesleep.org/?nocache=${GITHUB_RUN_ID}-${i}-${RANDOM}")
             TITLE=$(printf '%s' "$HTML" | python3 -c "import sys,re; m=re.search(r'<title[^>]*>(.*?)</title>', sys.stdin.read(), re.I|re.S); print(m.group(1).strip() if m else '')")
             TITLE=$(printf '%s' "$TITLE" | python3 -c "import sys,html; print(html.unescape(sys.stdin.read().strip()))")
-            echo "Attempt $i title: $TITLE"
+            LM=$(curl -fsSI -H 'Cache-Control: no-cache' "https://eatcodesleep.org/?nocache=lm-${GITHUB_RUN_ID}-$i" | tr -d '\r' | awk -F': ' 'tolower($1)=="last-modified"{print $2}')
+            echo "Attempt $i title: $TITLE | Last-Modified: $LM"
             if [ "$TITLE" = "$EXPECTED" ]; then
               echo "Production title OK"
-              # Best-effort cleanup of probe file
-              if [ -n "${FTP_PROBE_NAME:-}" ]; then
-                curl -fsSI "https://eatcodesleep.org/${FTP_PROBE_NAME}" >/dev/null 2>&1 || true
-              fi
               exit 0
             fi
             sleep 10
