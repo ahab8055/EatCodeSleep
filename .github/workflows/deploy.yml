@@ -31,6 +31,8 @@ jobs:
       - name: Build Astro site
         run: pnpm run build
 
+      # EAT-23 board: FTP_REMOTE_PATH = public_html (live document root).
+      # Hardcoded so a wrong/empty secret cannot land files outside public_html again.
       - name: Deploy to Hostinger via FTP
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
@@ -38,7 +40,7 @@ jobs:
           username: ${{ secrets.FTP_USER }}
           password: ${{ secrets.FTP_PASS }}
           local-dir: ./dist/
-          server-dir: ${{ secrets.FTP_REMOTE_PATH }}/
+          server-dir: public_html/
           state-name: .ftp-deploy-sync-state.json
           dangerous-clean-slate: false
 
