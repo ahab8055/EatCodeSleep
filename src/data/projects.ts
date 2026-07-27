@@ -13,7 +13,7 @@ import { siteConfig } from '@/data/site';
 export const workPageSeo = {
   title: 'Software Development Projects & AI Case Studies',
   description:
-    'Explore EatCodeSleep projects including AI applications, SaaS platforms, mobile apps, automation systems, and custom software solutions.',
+    'AI, SaaS, and custom software case studies from EatCodeSleep—agents, automation, edtech, commerce, and ops platforms with measurable delivery outcomes.',
   canonical: buildCanonicalUrl('/work'),
   keywords: [
     'Software development projects',
@@ -44,28 +44,28 @@ export const workPageJsonLd = {
           position: 1,
           name: 'Stax Fun',
           description:
-            'An AI-driven, Scratch-inspired platform for building interactive games with a visual block editor and AI copilot.',
+            'AI edtech platform: visual game editor + copilot so learners ship shareable projects faster.',
         },
         {
           '@type': 'CreativeWork',
           position: 2,
           name: 'Qreates',
           description:
-            'An AI platform that generates studio-quality product photography without traditional photoshoots.',
+            'Commerce brands cut photoshoot turnaround with studio-quality AI product imagery ready for channels.',
         },
         {
           '@type': 'CreativeWork',
           position: 3,
           name: 'Croptalk',
           description:
-            'An AI chatbot for plant and crop guidance with chat history, feedback loops, and subscription trials.',
+            'AgriTech AI chat with crop context, history, and subscription trial—guidance that persists across sessions.',
         },
         {
           '@type': 'CreativeWork',
           position: 4,
           name: 'Gradcut',
           description:
-            'A microservices graduation livestream platform that cuts and delivers ceremony clips with FFmpeg.',
+            'Kubernetes + FFmpeg pipelines that cut live ceremonies into per-student clips automatically.',
         },
       ],
     },
@@ -86,7 +86,7 @@ export const projects: WorkProject[] = [
     title: 'Stax Fun',
     category: 'AI EdTech',
     description:
-      'An AI-driven, Scratch-inspired platform that makes game development accessible through a visual block editor, AI copilot, and shareable projects.',
+      'AI edtech platform: visual game editor + copilot so learners ship shareable projects faster.',
     technologies: ['React', 'Flask', 'PostgreSQL', 'Nginx', 'Stripe', 'AWS'],
     outcomes: [
       { label: 'Visual block-based game editor' },
@@ -104,7 +104,7 @@ export const projects: WorkProject[] = [
     title: 'Qreates',
     category: 'AI Product Photography',
     description:
-      'An AI platform that creates studio-quality product photos without traditional photoshoots, helping brands ship channel-ready visuals faster.',
+      'Commerce brands cut photoshoot turnaround with studio-quality AI product imagery ready for channels.',
     technologies: ['Next.js', 'Clerk', 'PostgreSQL', 'Amazon SST', 'Drizzle ORM'],
     outcomes: [
       { label: 'AI product image generation from uploads' },
@@ -122,7 +122,7 @@ export const projects: WorkProject[] = [
     title: 'Croptalk',
     category: 'AI Agriculture',
     description:
-      'An AI chatbot focused on plant and crop guidance, delivering recommendations from crop context with chat history and feedback loops.',
+      'AgriTech AI chat with crop context, history, and subscription trial—guidance that persists across sessions.',
     technologies: ['Next.js', 'Clerk', 'DynamoDB', 'FastAPI', 'OpenAI', 'LangChain', 'Stripe'],
     outcomes: [
       { label: 'Clerk-authenticated AI chat access' },
@@ -140,7 +140,7 @@ export const projects: WorkProject[] = [
     title: 'Gradcut',
     category: 'Live Streaming',
     description:
-      'A microservices graduation livestream platform that cuts ceremony footage into student clips using FFmpeg pipelines on Kubernetes.',
+      'Kubernetes + FFmpeg pipelines that cut live ceremonies into per-student clips automatically.',
     technologies: ['Python', 'React', 'Next.js', 'Kubernetes', 'Docker', 'FFmpeg', 'PostgreSQL', 'Cognito'],
     outcomes: [
       { label: 'Live graduation stream cutting' },

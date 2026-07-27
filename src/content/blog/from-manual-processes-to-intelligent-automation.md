@@ -1,7 +1,8 @@
 ---
-title: 'From Manual Processes to Intelligent Automation'
-description: 'How teams move from repetitive operational work to reliable automation that combines deterministic workflows with AI.'
+title: 'From Manual Processes to Intelligent Automation (with AI)'
+description: 'A practical migration path from repetitive ops work to reliable automation—deterministic workflows first, AI where judgment is required, humans in the loop.'
 publishDate: 2026-04-30
+updatedDate: 2026-07-27
 author: 'EatCodeSleep'
 category: 'Automation'
 tags: ['Automation', 'Operations', 'AI']
@@ -26,3 +27,15 @@ High-impact actions—refunds, access changes, customer messages—should remain
 ## Compounding returns
 
 Once a workflow is reliable, every improvement reduces operational cost and frees teams to focus on higher-leverage work.
+
+## Checklist before you automate
+
+- [ ] Process owner named
+- [ ] Exceptions listed (not only the happy path)
+- [ ] Systems of record identified
+- [ ] Success metrics defined (time, error rate, cost)
+- [ ] Rollback path agreed
+
+## Next step
+
+Explore [business workflow automation](/services/#automation-systems) or [book a discovery call](/contact/) to prioritize your first high-ROI workflow.

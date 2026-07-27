@@ -28,7 +28,7 @@ export const featuredProjects: FeaturedProject[] = [
     category: 'AI EdTech',
     title: 'Stax Fun',
     description:
-      'An AI-driven, Scratch-inspired platform that makes game development accessible through a visual block editor, AI copilot, and shareable projects.',
+      'AI edtech platform: visual game editor + copilot so learners ship shareable projects faster.',
     technologies: ['React', 'Flask', 'PostgreSQL', 'Nginx', 'Stripe', 'AWS'],
     results: [
       {
@@ -56,7 +56,7 @@ export const featuredProjects: FeaturedProject[] = [
     category: 'AI Commerce',
     title: 'Qreates',
     description:
-      'An AI platform that creates studio-quality product photos without traditional photoshoots, helping brands ship channel-ready visuals faster.',
+      'Commerce brands cut photoshoot turnaround with studio-quality AI product imagery ready for channels.',
     technologies: ['Next.js', 'Clerk', 'PostgreSQL', 'Amazon SST', 'Drizzle ORM'],
     results: [
       {
@@ -84,7 +84,7 @@ export const featuredProjects: FeaturedProject[] = [
     category: 'AI Agriculture',
     title: 'Croptalk',
     description:
-      'An AI chatbot focused on plant and crop guidance, delivering recommendations from crop context with chat history and feedback loops.',
+      'AgriTech AI chat with crop context, history, and subscription trial—guidance that persists across sessions.',
     technologies: ['Next.js', 'Clerk', 'DynamoDB', 'FastAPI', 'OpenAI', 'LangChain'],
     results: [
       {
